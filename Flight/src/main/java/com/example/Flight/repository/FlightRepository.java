@@ -16,7 +16,11 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<Flight> findByOriginAndDestination(String origin, String destination);
 
     // Custom query to find flights by origin, destination, and departure time range
-    List<Flight> findByDestinationAndDepartureTimeBetween(String destination, LocalDateTime startTime, LocalDateTime endTime);
+    @Query("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination AND f.departureTime BETWEEN :startTime AND :endTime")
+    List<Flight> findByOriginAndDestinationAndDepartureTimeBetween(@Param("origin") String origin,
+                                                                    @Param("destination") String destination,
+                                                                    @Param("startTime") LocalDateTime startTime,
+                                                                    @Param("endTime") LocalDateTime endTime);
 
     // Custom query to find flights by status
     List<Flight> findByStatus(String status);

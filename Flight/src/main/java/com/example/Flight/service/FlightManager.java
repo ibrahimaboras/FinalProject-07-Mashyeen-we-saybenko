@@ -1,16 +1,20 @@
 package com.example.Flight.service;
 
 import com.example.Flight.model.Flight;
+import com.example.Flight.model.Price;
 import com.example.Flight.model.Seat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Flight.repository.FlightRepository;
+import com.example.Flight.repository.PriceRepository;
 import com.example.Flight.repository.SeatRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FlightManager {
@@ -21,6 +25,9 @@ public class FlightManager {
     
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private PriceRepository priceRepository;
 
     private FlightManager() {}
 
@@ -67,11 +74,12 @@ public class FlightManager {
     // Additional functionality
 
     public List<Flight> filterFlightsByDestinationAndDate(
+            String origin,
             String destination, 
             LocalDateTime startDate, 
             LocalDateTime endDate) {
-        return flightRepository.findByDestinationAndDepartureTimeBetween(
-            destination, startDate, endDate);
+        return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
+            origin, destination, startDate, endDate);
     }
 
     public boolean checkSeatAvailability(Long flightId, String seatNumber) {
@@ -117,7 +125,58 @@ public class FlightManager {
             });
     }
 
+    /**
+     * Get flights sorted by minimum available price
+     */
+    public List<Flight> getFlightsSortedByMinPrice() {
+        return priceRepository.findFlightsWithMinPrice().stream()
+            .map(result -> (Flight) result[0])
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get flights sorted by specific seat class price
+     * @param classType - the class type to sort by (e.g., "Economy", "Business")
+     */
+    public List<Flight> getFlightsSortedByClassPrice(String classType) {
+        return flightRepository.findAll().stream()
+            .sorted(Comparator.comparing(flight -> {
+                Double minPrice = priceRepository
+                    .findByFlightIdAndSeatClassType(flight.getFlightId(), classType)
+                    .stream()
+                    .mapToDouble(Price::getPrice)
+                    .min()
+                    .orElse(Double.MAX_VALUE);
+                return minPrice;
+            }))
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get available seats for a flight sorted by price
+     */
+    public List<Price> getAvailableSeatsSortedByPrice(Long flightId) {
+        Flight flight = flightRepository.findById(flightId)
+            .orElseThrow(() -> new RuntimeException("Flight not found"));
+        return priceRepository.findAvailablePricesByFlight(flight);
+    }
+
     public List<Flight> getFlightsByStatus(String status) {
         return flightRepository.findByStatus(status);
     }
+
+    public Double getMinPriceForFlight(Long flightId) {
+        return priceRepository.findByFlightId(flightId).stream()
+            .mapToDouble(Price::getPrice)
+            .min()
+            .orElse(0.0);
+    }
+    
+    public Double getMinPriceForFlightAndClass(Long flightId, String classType) {
+        return priceRepository.findByFlightIdAndSeatClassType(flightId, classType).stream()
+            .mapToDouble(Price::getPrice)
+            .min()
+            .orElse(0.0);
+    }
+    
 }
