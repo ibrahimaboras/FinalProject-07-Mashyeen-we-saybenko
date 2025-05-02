@@ -85,7 +85,7 @@ public class FlightManager {
     public boolean checkSeatAvailability(Long flightId, String seatNumber) {
         return flightRepository.findById(flightId)
             .map(flight -> {
-                Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+                Seat seat = seatRepository.findBySeatNumberAndFlightId(seatNumber, flight.getFlightId());
                 return seat != null && seat.getIsAvailable();
             })
             .orElse(false);
@@ -93,7 +93,7 @@ public class FlightManager {
 
     public Optional<Integer> getAvailableSeatCount(Long flightId) {
         return flightRepository.findById(flightId)
-            .map(flight -> seatRepository.findByFlightAndIsAvailable(flight, true).size());
+            .map(flight -> seatRepository.findByFlightIdAndIsAvailable(flight.getFlightId(), true).size());
     }
 
     public Optional<Flight> updateFlightStatus(Long flightId, String newStatus) {
@@ -109,7 +109,7 @@ public class FlightManager {
     public Optional<Flight> reserveSeat(Long flightId, String seatNumber) {
         return flightRepository.findById(flightId)
             .flatMap(flight -> {
-                Seat seat = seatRepository.findBySeatNumberAndFlight(seatNumber, flight);
+                Seat seat = seatRepository.findBySeatNumberAndFlightId(seatNumber, flight.getFlightId());
                 if (seat != null && seat.getIsAvailable()) {
                     // Update seat availability
                     seat.setIsAvailable(false);

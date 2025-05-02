@@ -10,8 +10,8 @@ import com.example.Flight.model.Seat;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    List<Seat> findByFlight(Flight flight);
-    List<Seat> findByFlightAndIsAvailable(Flight flight, Boolean isAvailable);
-    List<Seat> findByFlightAndClassType(Flight flight, String classType);
-    Seat findBySeatNumberAndFlight(String seatNumber, Flight flight);
+    List<Seat> findByFlightId(Long flight);
+    List<Seat> findByFlightIdAndIsAvailable(Long flight, Boolean isAvailable);
+    List<Seat> findByFlightIdAndClassType(Long flight, String classType);
+    Seat findBySeatNumberAndFlightId(String seatNumber, Long flight);
 }

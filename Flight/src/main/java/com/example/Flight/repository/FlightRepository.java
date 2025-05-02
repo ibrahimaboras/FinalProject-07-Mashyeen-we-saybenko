@@ -1,6 +1,8 @@
 package com.example.Flight.repository;
 
 import com.example.Flight.model.Flight;
+import com.example.Flight.model.Price;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,4 +44,17 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     // Custom query to count available flights between two locations
     @Query("SELECT COUNT(f) FROM Flight f WHERE f.origin = :origin AND f.destination = :destination")
     long countFlightsByRoute(@Param("origin") String origin, @Param("destination") String destination);
+
+    @Query("SELECT f, MIN(p.price) FROM Flight f JOIN Price p ON f.flightId = p.flight.flightId GROUP BY f")
+    List<Object[]> findFlightsWithMinPrice();
+
+    @Query("SELECT p FROM Price p WHERE p.flight.flightId = :flightId AND p.seat.isAvailable = true ORDER BY p.price")
+    List<Price> findAvailablePricesByFlight(@Param("flightId") Long flightId);
+
+    @Query("SELECT p FROM Price p WHERE p.flight.flightId = :flightId AND p.seat.classType = :classType")
+    List<Price> findByFlightIdAndSeatClassType(@Param("flightId") Long flightId, @Param("classType") String classType);
+
+    @Query("SELECT f FROM Flight f WHERE f.departureTime > :departureTime")
+    List<Flight> findFlightsDepartingAfter(@Param("departureTime") LocalDateTime departureTime);
+
 }

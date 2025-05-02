@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Long> {
     List<Price> findByFlightId(Long flight);
-    List<Price> findBySeat(Seat seat);
-    Price findByFlightAndSeat(Flight flight, Seat seat);
+    List<Price> findBySeatId(Long seat);
+    Price findByFlightIdAndSeatId(Long flight, Long seat);
 
     // Find minimum price for each flight
     @Query("SELECT p.flight, MIN(p.price) as minPrice FROM Price p GROUP BY p.flight ORDER BY minPrice")
