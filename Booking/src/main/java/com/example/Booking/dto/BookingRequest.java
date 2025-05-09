@@ -6,14 +6,14 @@ import org.hibernate.validator.constraints.UUID;
 
 import java.util.List;
 
-@Data
+// @Data
 public class BookingRequest {
-    @NotNull
-    private UUID userId;
+    // @NotNull
+    // private UUID userId;
 
-    @NotNull
-    private List<FlightTicketRequest> tickets;
+    // @NotNull
+    // private List<FlightTicketRequest> tickets;
 
-    @NotNull
-    private PaymentDetails paymentDetails;
+    // @NotNull
+    // private PaymentDetails paymentDetails;
 }

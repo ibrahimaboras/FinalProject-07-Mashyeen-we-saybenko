@@ -18,20 +18,20 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public BookingResponse createBooking(@Valid @RequestBody BookingRequest request) {
-        return bookingService.createBooking(request);
-    }
+    // @PostMapping
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public BookingResponse createBooking(@Valid @RequestBody BookingRequest request) {
+    //     return bookingService.createBooking(request);
+    // }
 
     @GetMapping("/{bookingId}")
     public BookingResponse getBooking(@PathVariable UUID bookingId) {
         return BookingResponse.from(bookingService.getBooking(bookingId));
     }
 
-    @DeleteMapping("/{bookingId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelBooking(@PathVariable UUID bookingId) {
-        bookingService.cancelBooking(bookingId);
-    }
+    // @DeleteMapping("/{bookingId}")
+    // @ResponseStatus(HttpStatus.NO_CONTENT)
+    // public void cancelBooking(@PathVariable UUID bookingId) {
+    //     bookingService.cancelBooking(bookingId);
+    // }
 }

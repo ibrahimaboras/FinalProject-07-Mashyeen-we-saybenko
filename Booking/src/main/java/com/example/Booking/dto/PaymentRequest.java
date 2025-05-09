@@ -1,4 +1,4 @@
-package com.example.Booking.Payment.dto;
+package com.example.Booking.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

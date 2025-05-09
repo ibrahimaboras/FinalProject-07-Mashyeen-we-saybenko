@@ -1,4 +1,4 @@
-package com.example.Booking.Payment.Events;
+package com.example.Booking.Events;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;

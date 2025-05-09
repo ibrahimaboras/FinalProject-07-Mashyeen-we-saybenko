@@ -1,7 +1,7 @@
-package com.example.Booking.Payment.repository;
+package com.example.Booking.repository;
 
-import com.example.Booking.Payment.model.Payment;
-import com.example.Booking.Payment.model.PaymentStatus;
+import com.example.Booking.model.Payment;
+import com.example.Booking.model.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

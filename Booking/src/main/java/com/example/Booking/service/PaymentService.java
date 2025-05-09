@@ -1,13 +1,13 @@
-package com.example.Booking.Payment.Service;
+package com.example.Booking.service;
 
 
 import com.example.Booking.Events.RabbitMQEventPublisher;
-import com.example.Booking.Payment.Exceptions.PaymentFailedException;
-import com.example.Booking.Payment.dto.PaymentRequest;
-import com.example.Booking.Payment.dto.PaymentResponse;
-import com.example.Booking.Payment.model.Payment;
-import com.example.Booking.Payment.model.PaymentStatus;
-import com.example.Booking.Payment.repository.PaymentRepository;
+import com.example.Booking.Exceptions.PaymentFailedException;
+import com.example.Booking.dto.PaymentRequest;
+import com.example.Booking.dto.PaymentResponse;
+import com.example.Booking.model.Payment;
+import com.example.Booking.model.PaymentStatus;
+import com.example.Booking.repository.PaymentRepository;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.repository.BookingRepository;

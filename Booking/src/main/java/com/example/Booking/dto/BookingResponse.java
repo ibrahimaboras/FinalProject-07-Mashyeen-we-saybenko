@@ -14,7 +14,7 @@ public class BookingResponse {
 
     public static BookingResponse from(Booking booking) {
         BookingResponse response = new BookingResponse();
-        response.setBookingId(booking.getBookingId());
+        // response.setBookingId(booking.getBookingId());
         response.setCreatedAt(booking.getCreatedAt());
         response.setStatus(booking.getStatus().toString());
         return response;

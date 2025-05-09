@@ -1,4 +1,4 @@
-package com.example.Booking.Payment.Events;
+package com.example.Booking.Events;
 
 import lombok.*;
 
