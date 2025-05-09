@@ -1,6 +1,8 @@
 package com.example.user.service;
 
+import com.example.user.command.*;
 import com.example.user.config.SingletonSessionManager;
+import com.example.user.dto.LoginDTO;
 import com.example.user.dto.PastFlightDTO;
 import com.example.user.model.User;
 import com.example.user.model.UserProfile;
@@ -21,6 +23,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final RestTemplate restTemplate;
+    private CreateUserCommand createUserCommand;
+    private ChangePasswordCommand changePasswordCommand;
+    private DeleteUserCommand deleteUserCommand;
+    private LoginCommand loginCommand;
+    private LogoutCommand logoutCommand;
+    private UpdateProfileCommand updateProfileCommand;
 
     @Value("${booking.service.url}")
     private String bookingServiceUrl;
@@ -36,49 +44,42 @@ public class UserService {
 
     // Register User
     public User registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists!");
-        }
-        return userRepository.save(user);
+       createUserCommand = new CreateUserCommand(this, user, this.userRepository);
+       return createUserCommand.execute();
     }
 
     // Login
+    //Consider for better security not giving them a direct answer of whether it is the email or password??
     public User login(String email, String password) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-
-        User user = optionalUser.get();
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Incorrect password");
-        }
-
-        SingletonSessionManager.getInstance().startSession(user.getUserId());
-        return user;
+//        Optional<User> optionalUser = userRepository.findByEmail(email);
+//        if (optionalUser.isEmpty()) {
+//            throw new RuntimeException("User not found");
+//        }
+//
+//        User user = optionalUser.get();
+//        if (!user.getPassword().equals(password)) {
+//            throw new RuntimeException("Incorrect password");
+//        }
+//
+//        SingletonSessionManager.getInstance().startSession(user.getUserId());
+//        return user;
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(email);
+        loginDTO.setPassword(password);
+        loginCommand = new LoginCommand(this, loginDTO, userRepository );
+        return loginCommand.execute();
     }
 
     // Logout
     public String logout(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
-
-        SingletonSessionManager.getInstance().endSession(userId);
-        return "User logged out successfully.";
+        logoutCommand = new LogoutCommand(this, userId, userRepository);
+        return logoutCommand.execute();
     }
 
     // Change Password
     public void changePassword(Long userId, String newPassword) {
-        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
-            throw new RuntimeException("User is not logged in.");
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setPassword(newPassword);
-        userRepository.save(user);
+        changePasswordCommand = new ChangePasswordCommand(this, userId, newPassword, userRepository);
+        changePasswordCommand.execute();
     }
 
     // Get user by ID
@@ -89,16 +90,8 @@ public class UserService {
 
     // Delete user
     public void deleteUser(Long userId) {
-        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
-            throw new RuntimeException("User is not logged in.");
-        }
-
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
-
-        userRepository.deleteById(userId);
-        SingletonSessionManager.getInstance().endSession(userId); // Optional: clean up session
+        deleteUserCommand = new DeleteUserCommand(this, userId, userRepository);
+        deleteUserCommand.execute();
     }
 
     // Update Profile
