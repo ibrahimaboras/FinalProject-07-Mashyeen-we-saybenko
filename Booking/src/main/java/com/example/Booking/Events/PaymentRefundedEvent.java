@@ -1,10 +1,8 @@
-package com.example.Booking.Payment.Events;
+package com.example.Booking.Events;
 
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**

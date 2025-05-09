@@ -1,7 +1,7 @@
-package com.example.Booking.Payment.dto;
+package com.example.Booking.dto;
 
-import com.example.Booking.Payment.model.Payment;
-import com.example.Booking.Payment.model.PaymentStatus;
+import com.example.Booking.model.Payment;
+import com.example.Booking.model.PaymentStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;

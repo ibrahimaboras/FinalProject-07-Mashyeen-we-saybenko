@@ -1,73 +1,80 @@
+// src/main/java/com/example/Booking/service/BookingService.java
 package com.example.Booking.service;
 
-import com.example.Booking.Exceptions.BookingNotFoundException;
+import com.example.Booking.Events.BookingCreatedEvent;
+import com.example.Booking.Events.BookingCancelledEvent;
 import com.example.Booking.dto.BookingRequest;
 import com.example.Booking.dto.BookingResponse;
+import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
+import com.example.Booking.model.Payment;
 import com.example.Booking.repository.BookingRepository;
 import com.example.Booking.Events.RabbitMQEventPublisher;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class BookingService {
-    private final BookingRepository bookingRepository;
-    private final FlightTicketService flightTicketService;
-    private final PaymentService paymentService;
+    private final BookingRepository       bookingRepository;
+    private final FlightTicketService    flightTicketService;
+    private final PaymentService         paymentService;
     private final RabbitMQEventPublisher eventPublisher;
 
-    public BookingService(BookingRepository bookingRepository,
-                          FlightTicketService flightTicketService,
-                          PaymentService paymentService,
-                          RabbitMQEventPublisher eventPublisher) {
-        this.bookingRepository = bookingRepository;
-        this.flightTicketService = flightTicketService;
-        this.paymentService = paymentService;
-        this.eventPublisher = eventPublisher;
-    }
-
+    /**
+     * Create a new booking, persist its tickets & initial payment,
+     * then publish a BookingCreatedEvent.
+     */
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
-        // 1. Create and save the booking
-        Booking booking = new Booking(); // Changed from builder()
-        booking.setUserId(request.getUserId());
+        // 1) instantiate & save booking
+        Booking booking = BookingFactory.create(request.getUserId());
         booking = bookingRepository.save(booking);
 
-        // 2. Add flight tickets
-        request.getTickets().forEach(ticketRequest ->
-                flightTicketService.createTicket(ticketRequest, booking.getBookingId()) // Changed to pass bookingId
-        );
+        // 2) create & attach tickets
+        for (var tr : request.getTickets()) {
+            flightTicketService.createTicket(tr, booking);
+        }
 
-        // 3. Initiate payment
-        paymentService.initiatePayment(booking.getBookingId(), request.getPaymentDetails());
+        // 3) initiate payment & attach
+        Payment payment = paymentService.initiatePayment(booking, request.getPaymentDetails());
+        booking.getPayments().add(payment);
 
-        // 4. Publish event
-        eventPublisher.publishEvent( // Unified event publishing method
-                "booking.created",
-                new BookingCreatedEvent(booking.getBookingId(), booking.getUserId())
+        // 4) publish domain event
+        eventPublisher.publishBookingCreatedEvent(
+                booking.getBookingId(),
+                booking.getUserId()
         );
 
         return BookingResponse.from(booking);
     }
 
-    public Booking getBooking(UUID bookingId) {
-        return bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException(bookingId));
+    /** Fetch a booking by ID */
+    @Transactional(readOnly = true)
+    public BookingResponse getBooking(UUID bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found: " + bookingId));
+        return BookingResponse.from(booking);
     }
 
+    /**
+     * Cancel a booking (if not already cancelled),
+     * persist the change, then emit BookingCancelledEvent.
+     */
     @Transactional
     public void cancelBooking(UUID bookingId) {
-        Booking booking = getBooking(bookingId);
-        booking.setStatus(BookingStatus.CANCELLED);
-        bookingRepository.save(booking);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found: " + bookingId));
 
-        // Refund payment
-        eventPublisher.publishEvent(
-                "booking.cancelled",
-                new BookingCancelledEvent(bookingId)
-        );
+        if (booking.getStatus() != BookingStatus.CANCELLED) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking);
+
+            eventPublisher.publishBookingCancelledEvent(bookingId);
+        }
     }
 }

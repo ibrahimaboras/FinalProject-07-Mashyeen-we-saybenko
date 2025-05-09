@@ -1,4 +1,4 @@
-package com.example.Booking.Payment.Exceptions;// PaymentFailedException.java
+package com.example.Booking.Exceptions;// PaymentFailedException.java
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

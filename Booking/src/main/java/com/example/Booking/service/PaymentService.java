@@ -1,13 +1,14 @@
-package com.example.Booking.Payment.Service;
+package com.example.Booking.service;
 
 
 import com.example.Booking.Events.RabbitMQEventPublisher;
-import com.example.Booking.Payment.Exceptions.PaymentFailedException;
-import com.example.Booking.Payment.dto.PaymentRequest;
-import com.example.Booking.Payment.dto.PaymentResponse;
-import com.example.Booking.Payment.model.Payment;
-import com.example.Booking.Payment.model.PaymentStatus;
-import com.example.Booking.Payment.repository.PaymentRepository;
+import com.example.Booking.Exceptions.PaymentFailedException;
+import com.example.Booking.dto.PaymentDetails;
+import com.example.Booking.dto.PaymentRequest;
+import com.example.Booking.dto.PaymentResponse;
+import com.example.Booking.model.Payment;
+import com.example.Booking.model.PaymentStatus;
+import com.example.Booking.repository.PaymentRepository;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.repository.BookingRepository;
@@ -24,8 +25,9 @@ public class PaymentService {
     private final RabbitMQEventPublisher eventPublisher;
 
     @Transactional
-    public PaymentResponse initiatePayment(PaymentRequest request) {
-        Booking booking = (Booking) bookingRepository.findByUserId(request.getBookingId());
+    public Payment initiatePayment(Booking booking, PaymentRequest  request) {
+
+
 
         Payment payment = Payment.builder()
                 .booking(booking)
@@ -43,17 +45,33 @@ public class PaymentService {
         if (isPaymentSuccessful) {
             payment.setStatus(PaymentStatus.COMPLETED);
             booking.setStatus(BookingStatus.CONFIRMED);
+
+            paymentRepository.save(payment);
+            bookingRepository.save(booking);
+
             eventPublisher.publishPaymentCompletedEvent(payment.getPaymentId());
         } else {
             payment.setStatus(PaymentStatus.FAILED);
+            paymentRepository.save(payment);
             throw new PaymentFailedException("Payment failed for booking: " + booking.getBookingId());
         }
 
-        paymentRepository.save(payment);
-        bookingRepository.save(booking);
 
+
+        return payment;
+    }
+    public PaymentResponse initiatePayment(PaymentRequest request) {
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Booking not found: " + request.getBookingId()
+                ));
+        Payment payment = initiatePayment(booking, request);
         return PaymentResponse.fromPayment(payment);
     }
+
+
+
+
 
     private boolean processPayment(Payment payment) {
         // Mock logic - in reality, call Stripe/PayPal/etc.
@@ -61,12 +79,12 @@ public class PaymentService {
     }
 
     @Transactional
-    public void refundPayment(UUID paymentId) {
-        Payment payment = (Payment) paymentRepository.findByBooking_BookingId(paymentId);
-
+    public PaymentResponse refundPayment(UUID paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found: " + paymentId));
         payment.setStatus(PaymentStatus.REFUNDED);
-        paymentRepository.save(payment);
-
+        payment = paymentRepository.save(payment);
         eventPublisher.publishPaymentRefundedEvent(paymentId);
+        return PaymentResponse.fromPayment(payment);
     }
 }

@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 @Getter
 @Setter
@@ -21,10 +21,10 @@ public class Booking {
     private UUID userId;  // Reference to UserService (eventual consistency)
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FlightTicket> tickets;  // 1 Booking → Many Tickets
+    private List<FlightTicket> tickets = new ArrayList<>();
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
-    private List<Payment> payments;  // 1 Booking → Many Payments
+    private List<Payment> payments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;  // Enum: PENDING, CONFIRMED, CANCELLED
@@ -32,71 +32,52 @@ public class Booking {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UUID getBookingId() {
-        return bookingId;
+
+
+
+    public Booking() {
+        this.tickets = new ArrayList<>();
+        this.payments = new ArrayList<>();
+        this.status   = BookingStatus.PENDING;
     }
 
-    public void setBookingId(UUID bookingId) {
+
+    public Booking(
+            UUID bookingId,
+            UUID userId,
+            List<FlightTicket> tickets,
+            List<Payment> payments,
+            BookingStatus status,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
         this.bookingId = bookingId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public List<FlightTicket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<FlightTicket> tickets) {
-        this.tickets = tickets;
-    }
-
-    public List<Payment> getPayments() {
-        return payments;
-    }
-
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
+        this.userId    = userId;
+        this.tickets   = (tickets   != null ? tickets   : new ArrayList<>());
+        this.payments  = (payments  != null ? payments  : new ArrayList<>());
+        this.status    = status;
         this.createdAt = createdAt;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        status = BookingStatus.PENDING;  // Default status
+        status    = BookingStatus.PENDING;  // ensure default
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-}
 
+    public void addTicket(FlightTicket ticket) {
+        tickets.add(ticket);
+        ticket.setBooking(this);
+    }
+
+    public void removeTicket(FlightTicket ticket) {
+        tickets.remove(ticket);
+        ticket.setBooking(null);
+    }
+}

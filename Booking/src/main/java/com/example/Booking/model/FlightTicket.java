@@ -1,9 +1,14 @@
 package com.example.Booking.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Entity
 public class FlightTicket {
 
@@ -21,6 +26,8 @@ public class FlightTicket {
     @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
+
+
 
     public UUID getFlightTicketId() {
         return flightTicketId;

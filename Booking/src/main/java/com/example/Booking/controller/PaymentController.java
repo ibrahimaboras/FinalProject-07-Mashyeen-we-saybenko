@@ -1,4 +1,4 @@
-package com.example.Booking.Payment.Controller;
+package com.example.Booking.controller;
 
 
 import com.example.Booking.dto.PaymentRequest;
