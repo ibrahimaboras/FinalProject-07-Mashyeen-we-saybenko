@@ -3,7 +3,7 @@ package com.example.Notification.controller;
 import com.example.Notification.model.Notification;
 import com.example.Notification.model.NotificationType;
 import com.example.Notification.repository.NotificationRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notifications")
-@RequiredArgsConstructor
 public class NotificationController {
 
     private final NotificationRepository notificationRepository;
+
+    @Autowired
+    public NotificationController(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
 
     @GetMapping("/search")
     public List<Notification> search(
@@ -24,18 +28,24 @@ public class NotificationController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after
     ) {
-        if (userId != null && type != null && after != null)
+        if (userId != null && type != null && after != null) {
             return notificationRepository.findByUserIdAndTypeAndTimestampAfter(userId, type, after);
-        if (userId != null && type != null)
+        }
+        if (userId != null && type != null) {
             return notificationRepository.findByUserIdAndType(userId, type);
-        if (userId != null && after != null)
+        }
+        if (userId != null && after != null) {
             return notificationRepository.findByUserIdAndTimestampAfter(userId, after);
-        if (userId != null)
+        }
+        if (userId != null) {
             return notificationRepository.findByUserId(userId);
-        if (type != null)
+        }
+        if (type != null) {
             return notificationRepository.findByType(type);
-        if (after != null)
+        }
+        if (after != null) {
             return notificationRepository.findByTimestampAfter(after);
+        }
         return notificationRepository.findAll();
     }
 }

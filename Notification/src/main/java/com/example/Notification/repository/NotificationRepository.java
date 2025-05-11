@@ -11,18 +11,33 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends MongoRepository<Notification, String> {
 
-    //MongoRepo
+    /**
+     * Find all notifications for a specific user.
+     */
+    List<Notification> findByUserId(Long userId);
 
-    List<Notification> findByUserId(Long userId); //All notifications for a specific user
+    /**
+     * Find all notifications of a specific type (EMAIL or SMS).
+     */
+    List<Notification> findByType(NotificationType type);
 
-    List<Notification> findByType(NotificationType type); //All EMAIL or SMS notifications
+    /**
+     * Find all notifications created after a specific timestamp.
+     */
+    List<Notification> findByTimestampAfter(LocalDateTime timestamp);
 
-    List<Notification> findByTimestampAfter(LocalDateTime timestamp); //All notifications after a date
+    /**
+     * Find all notifications by user and type.
+     */
+    List<Notification> findByUserIdAndType(Long userId, NotificationType type);
 
-    List<Notification> findByUserIdAndType(Long userId, NotificationType type); //Combine filters
+    /**
+     * Find all notifications by user and after a certain timestamp.
+     */
+    List<Notification> findByUserIdAndTimestampAfter(Long userId, LocalDateTime timestamp);
 
-    List<Notification> findByUserIdAndTimestampAfter(Long userId, LocalDateTime timestamp); //User's notifications after a certain time
-
-    List<Notification> findByUserIdAndTypeAndTimestampAfter(Long userId, NotificationType type, LocalDateTime timestamp); //Full search by user + type + date
-
+    /**
+     * Find all notifications by user, type, and after a certain timestamp.
+     */
+    List<Notification> findByUserIdAndTypeAndTimestampAfter(Long userId, NotificationType type, LocalDateTime timestamp);
 }
