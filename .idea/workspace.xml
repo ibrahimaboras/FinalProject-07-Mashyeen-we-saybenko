@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19922d88-9af5-4d53-a1bf-f8de9d0ac8b3" name="Changes" comment="fixed the code errors&#10;created dockerfile and docler-compose &#10;though the Notification app works on docker but does not run locally" />
+    <list default="true" id="19922d88-9af5-4d53-a1bf-f8de9d0ac8b3" name="Changes" comment="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/controller/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/controller/NotificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationServiceImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,7 +26,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="a04b85cc3047cf7e832af74de4e420fd02d843f8" />
+        <entry key="$PROJECT_DIR$" value="userBranch" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -32,16 +37,16 @@
     &quot;assignee&quot;: &quot;Menna1410&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ibrahimaboras/FinalProject-07-Mashyeen-we-saybenko.git",
-    "accountId": "f1fe595a-4e62-4146-a7ce-35032f2dbcb8"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ibrahimaboras/FinalProject-07-Mashyeen-we-saybenko.git&quot;,
+    &quot;accountId&quot;: &quot;f1fe595a-4e62-4146-a7ce-35032f2dbcb8&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -79,7 +84,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.0",
     "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "reactor"
+    "settings.editor.selected.configurable": "MavenSettings"
   }
 }]]></component>
   <component name="ReactorSettings">
@@ -197,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746984177823</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally">
+      <option name="closed" value="true" />
+      <created>1747061075667</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747061075667</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -217,7 +230,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="El notification microservice ALMOST kolo DONE Alhamdulellah aho rabena yesahel" />
     <MESSAGE value="fixed the code errors&#10;created dockerfile and docler-compose &#10;though the Notification app works on docker but does not run locally" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed the code errors&#10;created dockerfile and docler-compose &#10;though the Notification app works on docker but does not run locally" />
+    <MESSAGE value="created dockerfile and docler-compose" />
+    <MESSAGE value="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

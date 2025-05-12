@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,18 +42,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void handleBookingNotification(BookingNotificationEvent event) {
-        // 1. Get the correct template
         NotificationTemplate template = templateRepository.findByType(event.getType());
         if (template == null) {
             throw new IllegalArgumentException("No template found for type: " + event.getType());
         }
 
-        // 2. Render message content
         String message = event.getType() == NotificationType.EMAIL
                 ? emailTemplateProcessor.generateMessage(template, event.getData())
                 : smsTemplateProcessor.generateMessage(template, event.getData());
 
-        // 3. Save notification to MongoDB
         Notification notification = new Notification();
         notification.setUserId(event.getUserId());
         notification.setBookingId(event.getBookingId());
@@ -62,7 +60,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.save(notification);
 
-        // 4. Send notification using appropriate strategy
         NotificationSender sender = senderMap.get(event.getType().name());
         if (sender != null) {
             sender.send(String.valueOf(event.getUserId()), message);
@@ -70,4 +67,64 @@ public class NotificationServiceImpl implements NotificationService {
             throw new IllegalStateException("No sender found for type: " + event.getType());
         }
     }
+
+    @Override
+    public List<Notification> getAllNotifications() {
+        return notificationRepository.findAll();
+    }
+
+    @Override
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<Notification> getNotificationsByType(NotificationType type) {
+        return notificationRepository.findByType(type);
+    }
+
+    @Override
+    public List<Notification> getNotificationsAfterTimestamp(LocalDateTime timestamp) {
+        return notificationRepository.findByTimestampAfter(timestamp);
+    }
+
+    @Override
+    public List<Notification> getNotificationsByUserAndType(Long userId, NotificationType type) {
+        return notificationRepository.findByUserIdAndType(userId, type);
+    }
+
+    @Override
+    public List<Notification> getNotificationsByUserAndTimestamp(Long userId, LocalDateTime timestamp) {
+        return notificationRepository.findByUserIdAndTimestampAfter(userId, timestamp);
+    }
+
+    @Override
+    public List<Notification> getNotificationsByUserTypeAndTimestamp(Long userId, NotificationType type, LocalDateTime timestamp) {
+        return notificationRepository.findByUserIdAndTypeAndTimestampAfter(userId, type, timestamp);
+    }
+    @Override
+    public Notification createNotification(Notification notification) {
+        notification.setTimestamp(LocalDateTime.now());
+        return notificationRepository.save(notification);
+    }
+
+    @Override
+    public Notification updateNotification(String id, Notification updatedNotification) {
+        Notification existing = notificationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
+        existing.setMessage(updatedNotification.getMessage());
+        existing.setType(updatedNotification.getType());
+        existing.setUserId(updatedNotification.getUserId());
+        existing.setBookingId(updatedNotification.getBookingId());
+        return notificationRepository.save(existing);
+    }
+
+    @Override
+    public void deleteNotification(String id) {
+        if (!notificationRepository.existsById(id)) {
+            throw new IllegalArgumentException("Notification not found");
+        }
+        notificationRepository.deleteById(id);
+    }
+
 }
