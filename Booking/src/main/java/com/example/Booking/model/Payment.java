@@ -1,45 +1,47 @@
 package com.example.Booking.model;
 
+import com.example.Booking.model.Booking;
+import com.example.Booking.model.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter @Setter
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "payments")
 public class Payment {
+
+    public Payment(UUID paymentId, Booking booking, BigDecimal amount, String currency, PaymentStatus status, LocalDateTime paidAt) {
+        this.paymentId = paymentId;
+        this.booking = booking;
+        this.amount = amount;
+        this.currency = currency;
+        this.status = status;
+        this.paidAt = paidAt;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID paymentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
-    private Booking booking;  // Many Payments → One Booking
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Booking booking;
 
     private BigDecimal amount;
     private String currency;
-    private String paymentMethod;  // e.g., "CREDIT_CARD", "PAYPAL"
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;  // PENDING, COMPLETED, FAILED, REFUNDED
+    @Column(nullable = false)
+    private PaymentStatus status;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime paidAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        status = PaymentStatus.PENDING;
-    }
+    public Payment() {
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 }
-

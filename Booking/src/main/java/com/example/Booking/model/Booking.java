@@ -12,26 +12,26 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "bookings")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID bookingId;
 
     @Column(nullable = false)
-    private UUID userId;  // Reference to UserService (eventual consistency)
+    private UUID userId;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlightTicket> tickets = new ArrayList<>();
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status;  // Enum: PENDING, CONFIRMED, CANCELLED
+    private BookingStatus status;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 
 
 
@@ -60,24 +60,24 @@ public class Booking {
         this.updatedAt = updatedAt;
     }
 
+    public void addTicket(FlightTicket t) {
+        tickets.add(t);
+        t.setBooking(this);
+    }
+
+    public void addPayment(Payment p) {
+        payments.add(p);
+        p.setBooking(this);
+    }
+
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        status    = BookingStatus.PENDING;  // ensure default
+        createdAt = updatedAt = LocalDateTime.now();
+        if (status == null) status = BookingStatus.PENDING;
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public void addTicket(FlightTicket ticket) {
-        tickets.add(ticket);
-        ticket.setBooking(this);
-    }
-
-    public void removeTicket(FlightTicket ticket) {
-        tickets.remove(ticket);
-        ticket.setBooking(null);
     }
 }

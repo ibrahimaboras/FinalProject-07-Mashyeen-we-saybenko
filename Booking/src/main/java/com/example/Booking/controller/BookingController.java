@@ -1,34 +1,32 @@
-package com.example.Booking.controller;// src/main/java/com/example/Booking/controller/BookingController.java
+package com.example.Booking.controller;
 
-
-import com.example.Booking.commads.BookingCommandInvoker;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CreateBookingCommand;
-import com.example.Booking.dto.BookingRequest;
+import com.example.Booking.model.Booking;
 import com.example.Booking.service.BookingService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/bookings")
+@RequestMapping("/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-    private final BookingCommandInvoker invoker;
     private final BookingService bookingService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void createBooking(@Valid @RequestBody BookingRequest request) {
-        invoker.addCommand(new CreateBookingCommand(bookingService, request));
+    public Booking create(@RequestBody CreateBookingCommand cmd) {
+        return bookingService.create(cmd);
     }
 
-    @DeleteMapping("/{bookingId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void cancelBooking(@PathVariable UUID bookingId) {
-        invoker.addCommand(new CancelBookingCommand(bookingService, bookingId));
+    @GetMapping("/{id}")
+    public Booking get(@PathVariable UUID id) {
+        return bookingService.getById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public Booking cancel(@PathVariable UUID id) {
+        return bookingService.cancel(new CancelBookingCommand(id));
     }
 }

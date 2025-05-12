@@ -1,55 +1,38 @@
 package com.example.Booking.service;
 
-import com.example.Booking.dto.FlightTicketRequest;
+import com.example.Booking.commads.AddFlightTicketCommand;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.FlightTicket;
 import com.example.Booking.repository.BookingRepository;
-import com.example.Booking.repository.FlightTicketRepository;
-import jakarta.transaction.Transactional;
-import org.antlr.v4.runtime.misc.LogManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class FlightTicketService {
+    private final BookingRepository bookingRepo;
 
-    private final FlightTicketRepository flightTicketRepository;
-    private final BookingRepository bookingRepository;
+    public FlightTicket addTicket(AddFlightTicketCommand cmd) {
+        Booking b = bookingRepo.findById(cmd.getBookingId())
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "Booking not found"
+                        ));
 
-    public FlightTicketService(FlightTicketRepository flightTicketRepository, BookingRepository bookingRepository) {
-        this.flightTicketRepository = flightTicketRepository;
-        this.bookingRepository = bookingRepository;
-    }
-
-    @Transactional
-    public FlightTicket createTicket(FlightTicketRequest req, Booking booking) {
         FlightTicket t = new FlightTicket();
-        t.setFullName(req.getFullName());
-        t.setNationality(req.getNationality());
-        t.setPassportNumber(req.getPassportNumber());
-        t.setGender(req.getGender());
-        t.setDateOfBirth(req.getDateOfBirth());
-        t.setFlightId(req.getFlightId());
-        t.setSeatId(req.getSeatId());
-        booking.addTicket(t);
-        return flightTicketRepository.save(t);
-    }
+        t.setFullName(cmd.getFullName());
+        t.setNationality(cmd.getNationality());
+        t.setPassportNumber(cmd.getPassportNumber());
+        t.setGender(cmd.getGender());
+        t.setDateOfBirth(cmd.getDateOfBirth());
+        t.setFlightId(cmd.getFlightId());
+        t.setSeatId(cmd.getSeatId());
+        b.addTicket(t);
 
-    public FlightTicket createFlightTicket(UUID bookingId, FlightTicket ticket) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-
-        ticket.setBooking(booking);
-        return flightTicketRepository.save(ticket);
-    }
-
-    public List<FlightTicket> getTicketsByBooking(UUID bookingId) {
-        return flightTicketRepository.findByBookingBookingId(bookingId);
-    }
-
-    public void deleteTicket(UUID ticketId) {
-        flightTicketRepository.deleteById(ticketId);
+        // cascade = ALL on tickets
+        bookingRepo.save(b);
+        return t;
     }
 }

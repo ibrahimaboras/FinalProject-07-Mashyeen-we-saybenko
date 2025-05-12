@@ -1,24 +1,29 @@
-package com.example.Booking.commads;
+package com.example.Booking.commads;// CreateBookingCommand.java
 
 
-import com.example.Booking.commads.BookingCommand;
-import com.example.Booking.dto.BookingRequest;
-import com.example.Booking.service.BookingService;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
- * Encapsulates “create a booking” as an object.
+ * Create a new Booking for a user, optionally
+ * with an initial list of tickets.
  */
-public class CreateBookingCommand implements BookingCommand {
-    private final BookingService bookingService;
-    private final BookingRequest request;
+@Getter @RequiredArgsConstructor
+public class CreateBookingCommand {
+    private final UUID userId;
+    private final List<InitialTicket> tickets;
 
-    public CreateBookingCommand(BookingService bookingService, BookingRequest request) {
-        this.bookingService = bookingService;
-        this.request        = request;
-    }
-
-    @Override
-    public void execute() {
-        bookingService.createBooking(request);
+    @Getter @RequiredArgsConstructor
+    public static class InitialTicket {
+        private final String fullName;
+        private final String nationality;
+        private final String passportNumber;
+        private final String gender;
+        private final java.time.LocalDate dateOfBirth;
+        private final UUID flightId;
+        private final UUID seatId;
     }
 }
