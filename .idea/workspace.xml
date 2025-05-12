@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19922d88-9af5-4d53-a1bf-f8de9d0ac8b3" name="Changes" comment="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally">
+    <list default="true" id="19922d88-9af5-4d53-a1bf-f8de9d0ac8b3" name="Changes" comment="added methods &#10;getAllNotifications()&#10;handleBookingEvent(BookingNotificationEvent event)&#10;getNotificationsByUser(Long userId)&#10;getNotificationsByType(NotificationType type&#10;getNotificationsAfter(LocalDateTime timestamp)&#10;getNotificationsByUserAndType(Long userId, NotificationType type)&#10;getNotificationsByUserAndTimestamp(Long userId, LocalDateTime timestamp)&#10;getNotificationsByUserTypeAndTimestamp(Long userId, NotificationType type, LocalDateTime timestamp)&#10;search(...)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/controller/NotificationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/controller/NotificationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification/src/main/java/com/example/Notification/service/NotificationServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747061075667</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added methods &#10;getAllNotifications()&#10;handleBookingEvent(BookingNotificationEvent event)&#10;getNotificationsByUser(Long userId)&#10;getNotificationsByType(NotificationType type&#10;getNotificationsAfter(LocalDateTime timestamp)&#10;getNotificationsByUserAndType(Long userId, NotificationType type)&#10;getNotificationsByUserAndTimestamp(Long userId, LocalDateTime timestamp)&#10;getNotificationsByUserTypeAndTimestamp(Long userId, NotificationType type, LocalDateTime timestamp)&#10;search(...)">
+      <option name="closed" value="true" />
+      <created>1747066704900</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1747066704901</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -232,7 +237,8 @@
     <MESSAGE value="fixed the code errors&#10;created dockerfile and docler-compose &#10;though the Notification app works on docker but does not run locally" />
     <MESSAGE value="created dockerfile and docler-compose" />
     <MESSAGE value="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed the code errors&#10;created dockerfile and docker-compose &#10;though the Notification app works on docker but does not run locally" />
+    <MESSAGE value="added methods &#10;getAllNotifications()&#10;handleBookingEvent(BookingNotificationEvent event)&#10;getNotificationsByUser(Long userId)&#10;getNotificationsByType(NotificationType type&#10;getNotificationsAfter(LocalDateTime timestamp)&#10;getNotificationsByUserAndType(Long userId, NotificationType type)&#10;getNotificationsByUserAndTimestamp(Long userId, LocalDateTime timestamp)&#10;getNotificationsByUserTypeAndTimestamp(Long userId, NotificationType type, LocalDateTime timestamp)&#10;search(...)" />
+    <option name="LAST_COMMIT_MESSAGE" value="added methods &#10;getAllNotifications()&#10;handleBookingEvent(BookingNotificationEvent event)&#10;getNotificationsByUser(Long userId)&#10;getNotificationsByType(NotificationType type&#10;getNotificationsAfter(LocalDateTime timestamp)&#10;getNotificationsByUserAndType(Long userId, NotificationType type)&#10;getNotificationsByUserAndTimestamp(Long userId, LocalDateTime timestamp)&#10;getNotificationsByUserTypeAndTimestamp(Long userId, NotificationType type, LocalDateTime timestamp)&#10;search(...)" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
