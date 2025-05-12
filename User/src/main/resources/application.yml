@@ -1,6 +1,6 @@
 spring:
   application:
-    name: User
+    name: user-service
   datasource:
     url: jdbc:postgresql://db:5432/userdb
     username: postgres
@@ -13,8 +13,16 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080
+  port: 8081
 
 booking:
   service:
     url: http://localhost:8081  # replace with actual booking service base URL
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
