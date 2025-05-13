@@ -67,7 +67,7 @@
       </method>
     </configuration>
     <configuration name="FlightApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="Flight (1)" />
+      <module name="Flight" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.Flight.FlightApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
