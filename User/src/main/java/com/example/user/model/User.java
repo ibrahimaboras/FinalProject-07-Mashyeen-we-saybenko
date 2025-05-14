@@ -1,5 +1,6 @@
 package com.example.user.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class User {
     private LocalDateTime registrationDate;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference // Serialize the "User" side
     private UserProfile profile;
 
     // Constructors

@@ -18,13 +18,13 @@ public class LogoutCommand implements Command {
     }
 
     @Override
-    public String execute() {
+    public ResponseEntity<?>  execute() {
 //        return ResponseEntity.ok(userService.logout(userId));
         if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
+            return ResponseEntity.status(404).body("User not found");
         }
 
         SingletonSessionManager.getInstance().endSession(userId);
-        return "User logged out successfully.";
+        return ResponseEntity.ok("User logged out successfully");
     }
 }

@@ -17,7 +17,7 @@ public class UpdateProfileCommand implements Command {
     }
 
     @Override
-    public ResponseEntity<UserProfile> execute() {
+    public ResponseEntity<?> execute() {
         return ResponseEntity.ok(userService.updateUserProfile(userId, updatedProfile));
     }
 }

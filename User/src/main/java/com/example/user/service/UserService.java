@@ -10,8 +10,13 @@ import com.example.user.repository.UserProfileRepository;
 import com.example.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +27,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
-    private final RestTemplate restTemplate;
+
+
     private CreateUserCommand createUserCommand;
     private ChangePasswordCommand changePasswordCommand;
     private DeleteUserCommand deleteUserCommand;
@@ -30,27 +36,27 @@ public class UserService {
     private LogoutCommand logoutCommand;
     private UpdateProfileCommand updateProfileCommand;
 
+
     @Value("${booking.service.url}")
     private String bookingServiceUrl;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserProfileRepository userProfileRepository,
-                       RestTemplate restTemplate) {
+                       UserProfileRepository userProfileRepository
+                      ) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
-        this.restTemplate = restTemplate;
     }
 
     // Register User
-    public User registerUser(User user) {
-       createUserCommand = new CreateUserCommand(this, user, this.userRepository);
-       return createUserCommand.execute();
+    public  ResponseEntity<?> registerUser(User user) {
+        createUserCommand = new CreateUserCommand(this, user, this.userRepository);
+        return createUserCommand.execute();
     }
 
     // Login
     //Consider for better security not giving them a direct answer of whether it is the email or password??
-    public User login(String email, String password) {
+    public ResponseEntity<?> login(String email, String password) {
 //        Optional<User> optionalUser = userRepository.findByEmail(email);
 //        if (optionalUser.isEmpty()) {
 //            throw new RuntimeException("User not found");
@@ -71,30 +77,58 @@ public class UserService {
     }
 
     // Logout
-    public String logout(Long userId) {
+    @CacheEvict(value = "users", key = "#userId")
+    public ResponseEntity<?> logout(Long userId) {
         logoutCommand = new LogoutCommand(this, userId, userRepository);
         return logoutCommand.execute();
     }
 
     // Change Password
-    public void changePassword(Long userId, String newPassword) {
+    @CacheEvict(value = "users", key = "#userId") // make it cachePut
+    public ResponseEntity<?> changePassword(Long userId, String newPassword) {
         changePasswordCommand = new ChangePasswordCommand(this, userId, newPassword, userRepository);
-        changePasswordCommand.execute();
+       return changePasswordCommand.execute();
     }
 
     // Get user by ID
+    @Cacheable (value = "users", key = "#userId")
     public User getUserById(Long userId) {
+
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     // Delete user
-    public void deleteUser(Long userId) {
+    @CacheEvict(value = "users", key = "#userId")
+    public ResponseEntity<?> deleteUser(Long userId) {
         deleteUserCommand = new DeleteUserCommand(this, userId, userRepository);
-        deleteUserCommand.execute();
+        return deleteUserCommand.execute();
     }
 
-    // Update Profile
+//    // Update Profile
+//    @CachePut(value = "userProfiles", key = "#userId") // Update the UserProfile cache
+//    public UserProfile updateUserProfile(Long userId, UserProfile updatedProfile) {
+//        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
+//            throw new RuntimeException("User is not logged in.");
+//        }
+//
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        UserProfile profile = user.getProfile();
+//
+//        if (profile == null) {
+//            updatedProfile.setUser(user);
+//            return userProfileRepository.save(updatedProfile);
+//        } else {
+//            profile.setNationality(updatedProfile.getNationality());
+//            profile.setPassportNumber(updatedProfile.getPassportNumber());
+//            profile.setGender(updatedProfile.getGender());
+//            profile.setDateOfBirth(updatedProfile.getDateOfBirth());
+//            return userProfileRepository.save(profile);
+//        }
+//    }
+
     public UserProfile updateUserProfile(Long userId, UserProfile updatedProfile) {
         if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
             throw new RuntimeException("User is not logged in.");
@@ -117,19 +151,32 @@ public class UserService {
         }
     }
 
-    // View Past Flights
-    public List<PastFlightDTO> viewPastFlights(Long userId) {
-        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
-            throw new RuntimeException("User is not logged in.");
-        }
 
-        String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
-
+    public ResponseEntity<?> updateUserProfileWithMessage(Long userId, UserProfile updatedProfile) {
         try {
-            PastFlightDTO[] response = restTemplate.getForObject(url, PastFlightDTO[].class);
-            return Arrays.asList(response);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
+            UserProfile updated = updateUserProfile(userId, updatedProfile);
+            return ResponseEntity.ok("User profile updated successfully:\n" + updated.toString());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
         }
     }
+
+
+
+
+    // View Past Flights
+//    @Cacheable(value = "pastFlights", key = "#userId")
+//    public List<PastFlightDTO> viewPastFlights(Long userId) {
+//        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
+//            throw new RuntimeException("User is not logged in.");
+//        }
+//
+//        String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
+//
+//        try {
+//            return Arrays.asList(response);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
+//        }
+//    }
 }

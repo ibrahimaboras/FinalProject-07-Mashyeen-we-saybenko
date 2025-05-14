@@ -5,8 +5,11 @@ import com.example.user.dto.LoginDTO;
 import com.example.user.model.User;
 import com.example.user.repository.UserRepository;
 import com.example.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class LoginCommand implements Command {
@@ -22,20 +25,25 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public User execute() {
+    public ResponseEntity<?> execute() {
        // return ResponseEntity.ok(userService.login(loginDTO.getEmail(), loginDTO.getPassword()));
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.getEmail());
         if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found");
+            return  buildErrorResponse(HttpStatus.UNAUTHORIZED, "User not found");
         }
 
         User user = optionalUser.get();
         if (!user.getPassword().equals(loginDTO.getPassword())) {
-            throw new RuntimeException("Incorrect password");
+            return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Incorrect password");
         }
 
         SingletonSessionManager.getInstance().startSession(user.getUserId());
-        return user;
-
+        return ResponseEntity.ok(user);
+    }
+    // Helper method to build structured error response
+    private ResponseEntity<Map<String, String>> buildErrorResponse(HttpStatus status, String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", message);
+        return ResponseEntity.status(status).body(response);
     }
 }

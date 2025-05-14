@@ -4,6 +4,12 @@ import com.example.user.model.User;
 import com.example.user.repository.UserRepository;
 import com.example.user.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateUserCommand implements Command {
 
@@ -18,11 +24,14 @@ public class CreateUserCommand implements Command {
     }
 
     @Override
-    public User execute() {
+    public ResponseEntity<?> execute() {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists!");
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Email already exists!");
         }
-        return userRepository.save(user);
+        User savedUser= userRepository.save(user);
+        return ResponseEntity.ok(savedUser);
 //        return ResponseEntity.ok( userService.registerUser(user));
     }
+
 }
