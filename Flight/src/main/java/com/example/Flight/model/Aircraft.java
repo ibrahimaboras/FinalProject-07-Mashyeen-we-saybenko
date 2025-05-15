@@ -8,7 +8,7 @@ public class Aircraft {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "aircraft_id")
-    private Long aircraftId;
+    private Long id;
 
     @Column(nullable = false)
     private String model;
@@ -21,11 +21,11 @@ public class Aircraft {
 
     // Getters and Setters
     public Long getAircraftId() {
-        return aircraftId;
+        return id;
     }
 
     public void setAircraftId(Long aircraftId) {
-        this.aircraftId = aircraftId;
+        this.id = aircraftId;
     }
 
     public String getModel() {

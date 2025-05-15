@@ -10,7 +10,7 @@ public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seat_id")
-    private Long seatId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "flight_id", nullable = false)
@@ -27,11 +27,11 @@ public class Seat {
 
     // Getters and Setters
     public Long getSeatId() {
-        return seatId;
+        return id;
     }
 
     public void setSeatId(Long seatId) {
-        this.seatId = seatId;
+        this.id = seatId;
     }
 
     public Flight getFlight() {

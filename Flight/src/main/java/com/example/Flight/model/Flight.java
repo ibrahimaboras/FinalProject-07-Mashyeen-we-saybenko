@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long flightId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "aircraft_id")
@@ -29,6 +29,10 @@ public class Flight {
     private int availableSeats;
     private String gateInfo;
 
+    public Flight() {
+        // Default constructor
+    }
+
     private Flight(Builder builder) {
         this.aircraft = builder.aircraft;
         this.origin = builder.origin;
@@ -42,12 +46,12 @@ public class Flight {
     }
 
     public void setFlightId(Long flightId) {
-        this.flightId = flightId;
+        this.id = flightId;
     }
 
     // Getters
     public Long getFlightId() {
-        return flightId;
+        return id;
     }
 
     public Aircraft getAircraft() {
