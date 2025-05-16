@@ -1,13 +1,14 @@
-package com.example.Booking.commads;// CancelBookingCommand.java
+package com.example.Booking.commads;
 
+import lombok.*;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.UUID;
 
-/** Mark a booking as cancelled. */
-@Getter @RequiredArgsConstructor
-public class CancelBookingCommand {
-    private final UUID bookingId;
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class CancelBookingCommand implements Command, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private UUID bookingId;
 }
