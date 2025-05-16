@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -56,14 +57,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-//    @GetMapping("/{domain}")
-//    public ResponseEntity<ArrayList<User>> findUserByEmail(@PathVariable String email){
-//        return ResponseEntity.ok(userService.findUserByEmail(email));
-//    }
-//
-//    @GetMapping("/{fullName}")
-//    public ResponseEntity<User> findUserByFullName(@PathVariable String fullName){
-//        return ResponseEntity.ok(userService.findUserByFullName(fullName));
+    // View Past Flights
+//    @GetMapping("/{userId}/past-flights")
+//    public ResponseEntity<List<PastFlightDTO>> viewPastFlights(@PathVariable Long userId) {
+//        return ResponseEntity.ok(userService.viewPastFlights(userId));
 //    }
 
     // Delete user

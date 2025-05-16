@@ -15,12 +15,10 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 // use command
 
@@ -37,6 +35,7 @@ public class UserService {
     private LoginCommand loginCommand;
     private LogoutCommand logoutCommand;
     private UpdateProfileCommand updateProfileCommand;
+    private RestTemplate restTemplate;
 
 
     @Value("${booking.service.url}")
@@ -44,10 +43,11 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserProfileRepository userProfileRepository
+                       UserProfileRepository userProfileRepository, RestTemplate restTemplate
     ) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
+        this.restTemplate = restTemplate;
     }
 
     // Register User
@@ -128,16 +128,6 @@ public class UserService {
         }
     }
 
-//    @Cacheable (value = "users", key = "#userId")
-//    public ArrayList<User> findUserByEmail(String email){
-//        return userRepository.findUserByEmail(email);
-//    }
-//
-//    @Cacheable (value = "users", key = "#userId")
-//    public User findUserByFullName(String fullName){
-//        return userRepository.findUserByFullName(fullName);
-//    }
-
 
     // View Past Flights
 //    @Cacheable(value = "pastFlights", key = "#userId")
@@ -149,6 +139,23 @@ public class UserService {
 //        String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
 //
 //        try {
+//            return Arrays.asList(response);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
+//        }
+//    }
+//
+//    // View Past Flights
+//    public List<PastFlightDTO> viewPastFlights(Long userId) {
+//        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
+//            throw new RuntimeException("User is not logged in.");
+//        }
+//
+//       String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
+//
+//
+//        try {
+//            PastFlightDTO[] response = restTemplate.getForObject(url, PastFlightDTO[].class);
 //            return Arrays.asList(response);
 //        } catch (Exception e) {
 //            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
