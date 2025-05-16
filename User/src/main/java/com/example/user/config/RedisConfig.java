@@ -105,7 +105,7 @@ public class RedisConfig {
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(cacheConfiguration(objmapper))
-                .initialCacheNames(Set.of("usersByFullName", "usersByEmail"))
+                .initialCacheNames(Set.of("usersByFullName", "usersByEmail", "users"))
                 .build();
     }
 }
