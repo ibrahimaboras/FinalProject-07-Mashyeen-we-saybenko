@@ -5,13 +5,15 @@ import com.example.user.repository.UserRepository;
 import com.example.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 public class LogoutCommand implements Command {
 
     private final UserService userService;
-    private final Long userId;
+    private final UUID userId;
     private final UserRepository userRepository;
 
-    public LogoutCommand(UserService userService, Long userId, UserRepository userRepository) {
+    public LogoutCommand(UserService userService, UUID userId, UserRepository userRepository) {
         this.userService = userService;
         this.userId = userId;
         this.userRepository = userRepository;

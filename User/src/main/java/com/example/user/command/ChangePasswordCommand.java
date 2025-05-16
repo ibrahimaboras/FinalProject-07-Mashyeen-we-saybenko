@@ -6,14 +6,16 @@ import com.example.user.repository.UserRepository;
 import com.example.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 public class ChangePasswordCommand implements Command {
 
     private final UserService userService;
-    private final Long userId;
+    private final UUID userId;
     private final String newPassword;
     private final UserRepository userRepository;
 
-    public ChangePasswordCommand(UserService userService, Long userId, String newPassword, UserRepository userRepository) {
+    public ChangePasswordCommand(UserService userService, UUID userId, String newPassword, UserRepository userRepository) {
         this.userService = userService;
         this.userId = userId;
         this.newPassword = newPassword;

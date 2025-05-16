@@ -1,14 +1,16 @@
 package com.example.user.dto;
 
+import java.util.UUID;
+
 public class ChangePasswordDTO {
-    private Long userId;
+    private UUID userId;
     private String newPassword;
 
     // getters and setters
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

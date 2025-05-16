@@ -4,13 +4,15 @@ import com.example.user.model.UserProfile;
 import com.example.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 public class UpdateProfileCommand implements Command {
 
     private final UserService userService;
-    private final Long userId;
+    private final UUID userId;
     private final UserProfile updatedProfile;
 
-    public UpdateProfileCommand(UserService userService, Long userId, UserProfile updatedProfile) {
+    public UpdateProfileCommand(UserService userService, UUID userId, UserProfile updatedProfile) {
         this.userService = userService;
         this.userId = userId;
         this.updatedProfile = updatedProfile;

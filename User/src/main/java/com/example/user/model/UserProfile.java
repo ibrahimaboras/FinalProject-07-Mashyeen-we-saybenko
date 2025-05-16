@@ -3,13 +3,14 @@ package com.example.user.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_profiles")
 public class UserProfile {
 
     @Id
-    private Long userId;
+    private UUID userId;
 
     private String nationality;
 
@@ -36,11 +37,11 @@ public class UserProfile {
     }
 
     // Getters and Setters
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

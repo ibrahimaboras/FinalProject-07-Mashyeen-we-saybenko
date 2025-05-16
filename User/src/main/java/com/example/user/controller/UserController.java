@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -40,7 +41,7 @@ public class UserController {
 
     // Logout
     @PostMapping("/logout/{userId}")
-    public ResponseEntity<?> logout(@PathVariable Long userId) {
+    public ResponseEntity<?> logout(@PathVariable UUID userId) {
            return ResponseEntity.ok(userService.logout(userId));
     }
 
@@ -52,29 +53,25 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserById(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-//    @GetMapping("/{domain}")
-//    public ResponseEntity<ArrayList<User>> findUserByEmail(@PathVariable String email){
-//        return ResponseEntity.ok(userService.findUserByEmail(email));
-//    }
-//
-//    @GetMapping("/{fullName}")
-//    public ResponseEntity<User> findUserByFullName(@PathVariable String fullName){
-//        return ResponseEntity.ok(userService.findUserByFullName(fullName));
+    // View Past Flights
+//    @GetMapping("/{userId}/past-flights")
+//    public ResponseEntity<List<PastFlightDTO>> viewPastFlights(@PathVariable UUID userId) {
+//        return ResponseEntity.ok(userService.viewPastFlights(userId));
 //    }
 
     // Delete user
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<?> deleteUser(@PathVariable UUID userId) {
         return userService.deleteUser(userId);
     }
 
     // Update or add user profile
     @PutMapping("/{userId}/profile")
-    public ResponseEntity<?> updateProfile(@PathVariable Long userId, @RequestBody UserProfile profile) {
+    public ResponseEntity<?> updateProfile(@PathVariable UUID userId, @RequestBody UserProfile profile) {
         return userService.updateUserProfileWithMessage(userId, profile);
     }
     // Get user by full name
