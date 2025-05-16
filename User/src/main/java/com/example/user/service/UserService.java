@@ -46,8 +46,8 @@ public class UserService {
 
     // Register User
     public User registerUser(User user) {
-       createUserCommand = new CreateUserCommand(this, user, this.userRepository);
-       return createUserCommand.execute();
+        createUserCommand = new CreateUserCommand(this, user, this.userRepository);
+        return createUserCommand.execute();
     }
 
     // Login
@@ -134,4 +134,17 @@ public class UserService {
             throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
         }
     }
+    // Get user by username (full name)
+    public User getUserByFullName(String fullName) {
+        return userRepository.findByFullName(fullName)
+                .orElseThrow(() -> new RuntimeException("User not found with full name: " + fullName));
+    }
+
+    // Get user by email
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+
 }

@@ -1,3 +1,4 @@
+
 package com.example.user.controller;
 
 import com.example.user.command.*;
@@ -22,13 +23,13 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-        }
+    }
 
     // Register User
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody RegisterDTO dto) {
-       User user = new User(dto.getFullName(), dto.getEmail(), dto.getPassword(), dto.getPhone());
-       return ResponseEntity.ok(userService.registerUser(user));
+        User user = new User(dto.getFullName(), dto.getEmail(), dto.getPassword(), dto.getPhone());
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     // Login
@@ -78,6 +79,19 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    // Get user by full name
+    @GetMapping("/by-name")
+    public ResponseEntity<User> getUserByFullName(@RequestParam String fullName) {
+        return ResponseEntity.ok(userService.getUserByFullName(fullName));
+    }
+
+    // Get user by email
+    @GetMapping("/by-email")
+    public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+
     // Update or add user profile
     @PutMapping("/{userId}/profile")
     public ResponseEntity<UserProfile> updateProfile(@PathVariable Long userId, @RequestBody UserProfile profile) {
@@ -86,3 +100,4 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserProfile(userId, profile));
     }
 }
+
