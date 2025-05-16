@@ -8,6 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "flight")
 public class Flight {
@@ -21,8 +23,8 @@ public class Flight {
 
     private String origin;
     private String destination;
-    private String departureTime;
-    private String arrivalTime;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
 
     private String status; // e.g., "Scheduled", "Delayed", etc.
     private String classType; // e.g., "Economy", "Business"
@@ -66,11 +68,11 @@ public class Flight {
         return destination;
     }
 
-    public String getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
@@ -95,8 +97,8 @@ public class Flight {
         private Aircraft aircraft;
         private String origin;
         private String destination;
-        private String departureTime;
-        private String arrivalTime;
+        private LocalDateTime departureTime;
+        private LocalDateTime arrivalTime;
         private String status;
         private String classType;
         private int availableSeats;
@@ -117,12 +119,12 @@ public class Flight {
             return this;
         }
     
-        public Builder departureTime(String departureTime) {
+        public Builder departureTime(LocalDateTime departureTime) {
             this.departureTime = departureTime;
             return this;
         }
     
-        public Builder arrivalTime(String arrivalTime) {
+        public Builder arrivalTime(LocalDateTime arrivalTime) {
             this.arrivalTime = arrivalTime;
             return this;
         }
@@ -152,8 +154,8 @@ public class Flight {
         }
     }
 
-     // Copy builder for updates
-     public Builder copyBuilder() {
+    // Copy builder for updates
+    public Builder copyBuilder() {
         return new Builder()
             .aircraft(this.aircraft)
             .origin(this.origin)

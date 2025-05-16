@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,17 +56,14 @@ public class DatabaseSeedController {
             );
             aircraftRepository.saveAll(aircrafts);
 
-            // Date formatter for departure and arrival times
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
             // Create Flights
             List<Flight> flights = Arrays.asList(
                     new Flight.Builder()
                             .aircraft(aircrafts.get(0))
                             .origin("JFK")
                             .destination("LAX")
-                            .departureTime(LocalDateTime.now().plusDays(1).format(formatter))
-                            .arrivalTime(LocalDateTime.now().plusDays(1).plusHours(6).format(formatter))
+                            .departureTime(LocalDateTime.now().plusDays(1))
+                            .arrivalTime(LocalDateTime.now().plusDays(1).plusHours(6))
                             .status("Scheduled")
                             .classType("Economy")
                             .availableSeats(180)
@@ -77,8 +73,8 @@ public class DatabaseSeedController {
                             .aircraft(aircrafts.get(1))
                             .origin("ORD")
                             .destination("MIA")
-                            .departureTime(LocalDateTime.now().plusDays(2).format(formatter))
-                            .arrivalTime(LocalDateTime.now().plusDays(2).plusHours(3).format(formatter))
+                            .departureTime(LocalDateTime.now().plusDays(2))
+                            .arrivalTime(LocalDateTime.now().plusDays(2).plusHours(3))
                             .status("Scheduled")
                             .classType("Business")
                             .availableSeats(150)
@@ -88,8 +84,8 @@ public class DatabaseSeedController {
                             .aircraft(aircrafts.get(2))
                             .origin("SFO")
                             .destination("SEA")
-                            .departureTime(LocalDateTime.now().plusDays(3).format(formatter))
-                            .arrivalTime(LocalDateTime.now().plusDays(3).plusHours(2).format(formatter))
+                            .departureTime(LocalDateTime.now().plusDays(3))
+                            .arrivalTime(LocalDateTime.now().plusDays(3).plusHours(2))
                             .status("Scheduled")
                             .classType("Economy")
                             .availableSeats(250)

@@ -23,8 +23,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<Flight> findByOriginAndDestinationAndDepartureTimeBetween(
             @Param("origin") String origin,
             @Param("destination") String destination,
-            @Param("startTime") String startTime,
-            @Param("endTime") String endTime);
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 
     // Custom query to find flights by status
     List<Flight> findByStatus(String status);
@@ -36,19 +36,12 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     @Query("SELECT f FROM Flight f JOIN f.aircraft a WHERE a.model = :model")
     List<Flight> findByAircraftModel(@Param("model") String model);
 
-    // // Custom query to find flights departing after a specific time
-    // @Query("SELECT f FROM Flight f WHERE f.departureTime > :departureTime")
-    // List<Flight> findFlightsDepartingAfter(@Param("departureTime") String departureTime);
-
     // Custom query to find flights by class type
     List<Flight> findByClassType(String classType);
 
     // Custom query to count available flights between two locations
     @Query("SELECT COUNT(f) FROM Flight f WHERE f.origin = :origin AND f.destination = :destination")
     long countFlightsByRoute(@Param("origin") String origin, @Param("destination") String destination);
-
-    // @Query("SELECT f, MIN(p.price) FROM Flight f JOIN Price p ON f.id = p.flight.id GROUP BY f")
-    // List<Object[]> findFlightsWithMinPrice();
 
     @Query("SELECT p FROM Price p WHERE p.flight.id = :id AND p.seat.isAvailable = true ORDER BY p.price")
     List<Price> findAvailablePricesByFlight(@Param("id") Long id);
@@ -58,5 +51,4 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     @Query("SELECT f FROM Flight f WHERE f.departureTime > :departureTime")
     List<Flight> findFlightsDepartingAfter(@Param("departureTime") LocalDateTime departureTime);
-
 }

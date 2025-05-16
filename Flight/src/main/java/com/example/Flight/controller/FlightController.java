@@ -73,12 +73,7 @@ public class FlightController {
             @RequestParam String destination,
             @RequestParam LocalDateTime startTime,
             @RequestParam LocalDateTime endTime) {
-
-        // Format the start and end date-time to ISO format
-        String startDateTime = startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        String endDateTime = endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        
-        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startDateTime, endDateTime);
+        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startTime, endTime);
     }
 
     @GetMapping("/status/{status}")
