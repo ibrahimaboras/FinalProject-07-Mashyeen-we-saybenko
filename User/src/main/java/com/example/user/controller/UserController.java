@@ -56,15 +56,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @GetMapping("/{domain}")
-    public ResponseEntity<ArrayList<User>> findUserByEmail(@PathVariable String email){
-        return ResponseEntity.ok(userService.findUserByEmail(email));
-    }
-
-    @GetMapping("/{fullName}")
-    public ResponseEntity<User> findUserByFullName(@PathVariable String fullName){
-        return ResponseEntity.ok(userService.findUserByFullName(fullName));
-    }
+//    @GetMapping("/{domain}")
+//    public ResponseEntity<ArrayList<User>> findUserByEmail(@PathVariable String email){
+//        return ResponseEntity.ok(userService.findUserByEmail(email));
+//    }
+//
+//    @GetMapping("/{fullName}")
+//    public ResponseEntity<User> findUserByFullName(@PathVariable String fullName){
+//        return ResponseEntity.ok(userService.findUserByFullName(fullName));
+//    }
 
     // Delete user
     @DeleteMapping("/{userId}")

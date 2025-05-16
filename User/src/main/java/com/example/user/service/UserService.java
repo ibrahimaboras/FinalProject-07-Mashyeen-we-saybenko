@@ -126,15 +126,15 @@ public class UserService {
         }
     }
 
-    @Cacheable (value = "users", key = "#userId")
-    public ArrayList<User> findUserByEmail(String email){
-        return userRepository.findUserByEmail(email);
-    }
-
-    @Cacheable (value = "users", key = "#userId")
-    public User findUserByFullName(String fullName){
-        return userRepository.findUserByFullName(fullName);
-    }
+//    @Cacheable (value = "users", key = "#userId")
+//    public ArrayList<User> findUserByEmail(String email){
+//        return userRepository.findUserByEmail(email);
+//    }
+//
+//    @Cacheable (value = "users", key = "#userId")
+//    public User findUserByFullName(String fullName){
+//        return userRepository.findUserByFullName(fullName);
+//    }
 
 
     // View Past Flights
