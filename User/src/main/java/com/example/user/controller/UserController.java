@@ -82,4 +82,15 @@ public class UserController {
 //      return updateProfileCommand.execute();
         return userService.updateUserProfileWithMessage(userId, profile);
     }
+    // Get user by full name
+    @GetMapping("/by-name")
+    public ResponseEntity<User> getUserByFullName(@RequestParam String fullName) {
+        return ResponseEntity.ok(userService.getUserByFullName(fullName));
+    }
+
+    // Get user by email
+    @GetMapping("/by-email")
+    public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
 }

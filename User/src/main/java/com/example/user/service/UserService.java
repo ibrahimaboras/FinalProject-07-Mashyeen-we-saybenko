@@ -43,7 +43,7 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository,
                        UserProfileRepository userProfileRepository
-                      ) {
+    ) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
     }
@@ -87,7 +87,7 @@ public class UserService {
     @CacheEvict(value = "users", key = "#userId") // make it cachePut
     public ResponseEntity<?> changePassword(Long userId, String newPassword) {
         changePasswordCommand = new ChangePasswordCommand(this, userId, newPassword, userRepository);
-       return changePasswordCommand.execute();
+        return changePasswordCommand.execute();
     }
 
     // Get user by ID
@@ -179,4 +179,19 @@ public class UserService {
 //            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
 //        }
 //    }
+
+    // Get user by full name
+    @Cacheable(value = "usersByFullName", key = "#fullName")
+    public User getUserByFullName(String fullName) {
+        return userRepository.findByFullName(fullName)
+                .orElseThrow(() -> new RuntimeException("User not found with full name: " + fullName));
+    }
+
+    // Get user by email
+    @Cacheable(value = "usersByEmail", key = "#email")
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
 }

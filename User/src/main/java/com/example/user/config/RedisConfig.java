@@ -63,44 +63,50 @@
 
 package com.example.user.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.*;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.Duration;
+import java.util.Set;
 
 @Configuration
 @EnableCaching
 public class RedisConfig {
 
     @Bean
-    public RedisCacheConfiguration cacheConfiguration() {
-        // Set up ObjectMapper with Jackson for handling JSON serialization
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule()) // For Java 8 Time support
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Avoid using timestamps for dates
+    public RedisCacheConfiguration cacheConfiguration(ObjectMapper objectMapper) {
+        objectMapper = objectMapper.copy();
+        objectMapper = objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        // Use Jackson-based serializer for Redis values
-        RedisSerializer<Object> serializer = new GenericJackson2JsonRedisSerializer(mapper);
-
-        // Configure Redis cache with the custom serializer
         return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(1))
+                .disableCachingNullValues()
                 .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(serializer) // Apply serializer
-                );
+                        RedisSerializationContext.SerializationPair.fromSerializer(
+                                new GenericJackson2JsonRedisSerializer(objectMapper)));
     }
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        // Configure the RedisCacheManager with the cache configuration and connection factory
+        ObjectMapper objmapper = new ObjectMapper();
+
         return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(cacheConfiguration()) // Apply default cache configuration
-                .build(); // Return the built RedisCacheManager instance
+                .cacheDefaults(cacheConfiguration(objmapper))
+                .initialCacheNames(Set.of("usersByFullName", "usersByEmail"))
+                .build();
     }
 }
 
