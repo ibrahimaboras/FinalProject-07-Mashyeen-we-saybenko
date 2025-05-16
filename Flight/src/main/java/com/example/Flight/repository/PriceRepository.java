@@ -2,6 +2,7 @@ package com.example.Flight.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.Flight.model.Flight;
@@ -17,8 +18,8 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     Price findByFlightIdAndSeatId(Long flight, Long seat);
 
     // Find minimum price for each flight
-    @Query("SELECT p.flight, MIN(p.price) as minPrice FROM Price p GROUP BY p.flight ORDER BY minPrice")
-    List<Object[]> findFlightsWithMinPrice();
+    @Query("SELECT p.flight, MIN(p.price) FROM Price p JOIN p.seat s WHERE s.isAvailable = true AND p.flight IN :flights GROUP BY p.flight")
+    List<Object[]> findMinPricesForFlights(@Param("flights") List<Flight> flights);
     
     // Find prices for available seats
     @Query("SELECT p FROM Price p WHERE p.seat.isAvailable = true AND p.flight = :flight ORDER BY p.price")

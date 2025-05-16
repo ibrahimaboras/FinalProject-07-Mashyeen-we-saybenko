@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/seed")
+@RequestMapping("/api/flightSeed")
 public class DatabaseSeedController {
 
     private final AircraftRepository aircraftRepository;

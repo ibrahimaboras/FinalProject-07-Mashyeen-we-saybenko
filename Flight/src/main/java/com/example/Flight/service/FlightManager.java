@@ -134,8 +134,11 @@ public class FlightManager {
     /**
      * Get flights sorted by minimum available price
      */
-    public List<Flight> getFlightsSortedByMinPrice() {
-        return priceRepository.findFlightsWithMinPrice().stream()
+    public List<Flight> getFlightsSortedByMinPrice(
+            String origin, 
+            String destination)  {
+        List<Flight> flights = filterFlightsByOriginAndDestination(origin, destination);
+        return priceRepository.findMinPricesForFlights(flights).stream()
             .map(result -> (Flight) result[0])
             .collect(Collectors.toList());
     }

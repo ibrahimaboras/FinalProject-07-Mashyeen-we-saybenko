@@ -117,8 +117,10 @@ public class FlightController {
     // Pricing Related Endpoints
 
     @GetMapping("/sorted/price")
-    public List<Flight> getFlightsSortedByPrice() {
-        return flightManager.getFlightsSortedByMinPrice();
+    public List<Flight> getFlightsSortedByPrice(
+            @RequestParam String origin,
+            @RequestParam String destination) {
+        return flightManager.getFlightsSortedByMinPrice(origin, destination);
     }
 
     @GetMapping("/sorted/price/{classType}")
