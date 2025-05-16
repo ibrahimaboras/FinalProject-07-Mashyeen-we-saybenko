@@ -19,7 +19,7 @@ public class LogoutCommand implements Command {
 
     @Override
     public ResponseEntity<?>  execute() {
-//        return ResponseEntity.ok(userService.logout(userId));
+
         if (!userRepository.existsById(userId)) {
             return ResponseEntity.status(404).body("User not found");
         }

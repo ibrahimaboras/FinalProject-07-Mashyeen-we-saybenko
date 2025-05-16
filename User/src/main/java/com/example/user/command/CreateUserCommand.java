@@ -31,7 +31,7 @@ public class CreateUserCommand implements Command {
         }
         User savedUser= userRepository.save(user);
         return ResponseEntity.ok(savedUser);
-//        return ResponseEntity.ok( userService.registerUser(user));
+
     }
 
 }
