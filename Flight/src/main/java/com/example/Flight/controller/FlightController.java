@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,16 +60,25 @@ public class FlightController {
         return flightManager.getAllFlights();
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/originAndDestination")
+    public List<Flight> searchFlightsByOriginAndDestination(
+            @RequestParam String origin,
+            @RequestParam String destination) {
+        return flightManager.filterFlightsByOriginAndDestination(origin, destination);
+    }
+
+    @GetMapping("/search/destinationAndDate")
     public List<Flight> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime departureDate) {
+            @RequestParam LocalDateTime startTime,
+            @RequestParam LocalDateTime endTime) {
+
+        // Format the start and end date-time to ISO format
+        String startDateTime = startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String endDateTime = endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         
-        LocalDateTime startDate = departureDate.withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endDate = departureDate.withHour(23).withMinute(59).withSecond(59);
-        
-        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startDate, endDate);
+        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startDateTime, endDateTime);
     }
 
     @GetMapping("/status/{status}")

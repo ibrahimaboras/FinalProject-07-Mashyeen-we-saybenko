@@ -18,11 +18,13 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<Flight> findByOriginAndDestination(String origin, String destination);
 
     // Custom query to find flights by origin, destination, and departure time range
-    @Query("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination AND f.departureTime BETWEEN :startTime AND :endTime")
-    List<Flight> findByOriginAndDestinationAndDepartureTimeBetween(@Param("origin") String origin,
-                                                                    @Param("destination") String destination,
-                                                                    @Param("startTime") LocalDateTime startTime,
-                                                                    @Param("endTime") LocalDateTime endTime);
+    @Query("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination " +
+           "AND f.departureTime >= :startTime AND f.departureTime <= :endTime")
+    List<Flight> findByOriginAndDestinationAndDepartureTimeBetween(
+            @Param("origin") String origin,
+            @Param("destination") String destination,
+            @Param("startTime") String startTime,
+            @Param("endTime") String endTime);
 
     // Custom query to find flights by status
     List<Flight> findByStatus(String status);
@@ -34,9 +36,9 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     @Query("SELECT f FROM Flight f JOIN f.aircraft a WHERE a.model = :model")
     List<Flight> findByAircraftModel(@Param("model") String model);
 
-    // Custom query to find flights departing after a specific time
-    @Query("SELECT f FROM Flight f WHERE f.departureTime > :departureTime")
-    List<Flight> findFlightsDepartingAfter(@Param("departureTime") String departureTime);
+    // // Custom query to find flights departing after a specific time
+    // @Query("SELECT f FROM Flight f WHERE f.departureTime > :departureTime")
+    // List<Flight> findFlightsDepartingAfter(@Param("departureTime") String departureTime);
 
     // Custom query to find flights by class type
     List<Flight> findByClassType(String classType);

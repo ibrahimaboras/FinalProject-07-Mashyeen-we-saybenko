@@ -19,6 +19,25 @@ public class Aircraft {
     @Column(name = "airline_name", nullable = false)
     private String airlineName;
 
+    // Default constructor
+    public Aircraft() {
+    }
+    
+    // Parameterized constructor
+    public Aircraft(String model, Integer capacity, String airlineName) {
+        this.model = model;
+        this.capacity = capacity;
+        this.airlineName = airlineName;
+    }
+
+    // Constructor for updating
+    public Aircraft(Long id, String model, Integer capacity, String airlineName) {
+        this.id = id;
+        this.model = model;
+        this.capacity = capacity;
+        this.airlineName = airlineName;
+    }
+
     // Getters and Setters
     public Long getAircraftId() {
         return id;

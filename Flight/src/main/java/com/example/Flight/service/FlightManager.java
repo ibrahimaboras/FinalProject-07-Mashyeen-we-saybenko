@@ -73,14 +73,20 @@ public class FlightManager {
 
     // Additional functionality
 
-    public List<Flight> filterFlightsByDestinationAndDate(
-            String origin,
-            String destination, 
-            LocalDateTime startDate, 
-            LocalDateTime endDate) {
-        return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
-            origin, destination, startDate, endDate);
+    public List<Flight> filterFlightsByOriginAndDestination(
+            String origin, 
+            String destination) {
+        return flightRepository.findByOriginAndDestination(origin, destination);
     }
+
+    public List<Flight> filterFlightsByDestinationAndDate(
+        String origin,
+        String destination, 
+        String startDateTime,
+        String endDateTime) {
+    return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
+        origin, destination, startDateTime, endDateTime);
+}
 
     public boolean checkSeatAvailability(Long flightId, String seatNumber) {
         return flightRepository.findById(flightId)
