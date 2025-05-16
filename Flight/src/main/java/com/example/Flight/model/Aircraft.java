@@ -8,7 +8,7 @@ public class Aircraft {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "aircraft_id")
-    private Long aircraftId;
+    private Long id;
 
     @Column(nullable = false)
     private String model;
@@ -19,13 +19,32 @@ public class Aircraft {
     @Column(name = "airline_name", nullable = false)
     private String airlineName;
 
+    // Default constructor
+    public Aircraft() {
+    }
+    
+    // Parameterized constructor
+    public Aircraft(String model, Integer capacity, String airlineName) {
+        this.model = model;
+        this.capacity = capacity;
+        this.airlineName = airlineName;
+    }
+
+    // Constructor for updating
+    public Aircraft(Long id, String model, Integer capacity, String airlineName) {
+        this.id = id;
+        this.model = model;
+        this.capacity = capacity;
+        this.airlineName = airlineName;
+    }
+
     // Getters and Setters
     public Long getAircraftId() {
-        return aircraftId;
+        return id;
     }
 
     public void setAircraftId(Long aircraftId) {
-        this.aircraftId = aircraftId;
+        this.id = aircraftId;
     }
 
     public String getModel() {

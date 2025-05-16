@@ -1,8 +1,11 @@
 package com.example.Flight.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.Flight.model.Flight;
 import com.example.Flight.repository.FlightRepository;
 
+@Service
 public class FlightService {
     // In a real app, this would be a database repository (e.g., JPA, MongoDB)
     private final FlightRepository flightRepository; 
@@ -11,10 +14,23 @@ public class FlightService {
         this.flightRepository = flightRepository;
     }
 
-    // Create a single flight
+    // Create a single flight using the builder pattern
     public Flight createFlight(Flight flight) {
-        return flightRepository.save(flight);
+        Flight newFlight = new Flight.Builder()
+            .aircraft(flight.getAircraft())
+            .origin(flight.getOrigin())
+            .destination(flight.getDestination())
+            .departureTime(flight.getDepartureTime())
+            .arrivalTime(flight.getArrivalTime())
+            .status(flight.getStatus())
+            .classType(flight.getClassType())
+            .availableSeats(flight.getAvailableSeats())
+            .gateInfo(flight.getGateInfo())
+            .build();
+
+        return flightRepository.save(newFlight);
     }
+
 
     // Get a single flight by ID
     public Flight getFlightById(Long flightId) {
