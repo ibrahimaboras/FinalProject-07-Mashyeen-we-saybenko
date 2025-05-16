@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,44 +23,31 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-        }
+    }
 
     // Register User
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody RegisterDTO dto) {
-       User user = new User(dto.getFullName(), dto.getEmail(), dto.getPassword(), dto.getPhone());
-       return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDTO dto) {
+        User user = new User(dto.getFullName(), dto.getEmail(), dto.getPassword(), dto.getPhone());
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     // Login
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         return ResponseEntity.ok(userService.login(dto.getEmail(), dto.getPassword()));
-
-
     }
 
     // Logout
     @PostMapping("/logout/{userId}")
-    public ResponseEntity<String> logout(@PathVariable Long userId) {
-        //logoutCommand = new LogoutCommand(userService, userId);
-        //return logoutCommand.execute();
-        return ResponseEntity.ok(userService.logout(userId));
+    public ResponseEntity<?> logout(@PathVariable Long userId) {
+           return ResponseEntity.ok(userService.logout(userId));
     }
 
     // Change Password
     @PutMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordDTO dto) {
-//        changePasswordCommand = new ChangePasswordCommand(userService, dto.getUserId(), dto.getNewPassword());
-//        return changePasswordCommand.execute();
-        userService.changePassword(dto.getUserId(), dto.getNewPassword());
-        return ResponseEntity.noContent().build();
-    }
-
-    // View Past Flights
-    @GetMapping("/{userId}/past-flights")
-    public ResponseEntity<List<PastFlightDTO>> viewPastFlights(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.viewPastFlights(userId));
+    public ResponseEntity<?>changePassword(@RequestBody ChangePasswordDTO dto) {
+        return userService.changePassword(dto.getUserId(), dto.getNewPassword());
     }
 
     // Get user by ID
@@ -68,21 +56,36 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
+//    @GetMapping("/{domain}")
+//    public ResponseEntity<ArrayList<User>> findUserByEmail(@PathVariable String email){
+//        return ResponseEntity.ok(userService.findUserByEmail(email));
+//    }
+//
+//    @GetMapping("/{fullName}")
+//    public ResponseEntity<User> findUserByFullName(@PathVariable String fullName){
+//        return ResponseEntity.ok(userService.findUserByFullName(fullName));
+//    }
+
     // Delete user
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-//        deleteUserCommand = new DeleteUserCommand(userService, userId);
-//        return deleteUserCommand.execute();
-
-        userService.deleteUser(userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        return userService.deleteUser(userId);
     }
 
     // Update or add user profile
     @PutMapping("/{userId}/profile")
-    public ResponseEntity<UserProfile> updateProfile(@PathVariable Long userId, @RequestBody UserProfile profile) {
-//      updateProfileCommand = new UpdateProfileCommand(userService, userId, profile);
-//      return updateProfileCommand.execute();
-        return ResponseEntity.ok(userService.updateUserProfile(userId, profile));
+    public ResponseEntity<?> updateProfile(@PathVariable Long userId, @RequestBody UserProfile profile) {
+        return userService.updateUserProfileWithMessage(userId, profile);
+    }
+    // Get user by full name
+    @GetMapping("/by-name")
+    public ResponseEntity<User> getUserByFullName(@RequestParam String fullName) {
+        return ResponseEntity.ok(userService.getUserByFullName(fullName));
+    }
+
+    // Get user by email
+    @GetMapping("/by-email")
+    public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 }

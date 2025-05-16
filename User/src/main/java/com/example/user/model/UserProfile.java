@@ -1,5 +1,6 @@
 package com.example.user.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -21,6 +22,7 @@ public class UserProfile {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonBackReference // Prevent serialization of the "User" side
     private User user;
 
     // Constructors
@@ -81,4 +83,15 @@ public class UserProfile {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "UserProfile{" +
+                "nationality='" + nationality + '\'' +
+                ", passportNumber='" + passportNumber + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
+    }
+
 }
