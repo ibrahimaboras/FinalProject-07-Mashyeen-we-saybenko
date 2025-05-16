@@ -2,8 +2,8 @@ package com.example.user.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
-import java.util.UUID;
 
 
 @Entity
@@ -11,7 +11,7 @@ import java.util.UUID;
 public class UserProfile {
 
     @Id
-    private UUID userId;
+    private Long userId;
 
     private String nationality;
 
@@ -38,11 +38,11 @@ public class UserProfile {
     }
 
     // Getters and Setters
-    public UUID getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

@@ -3,7 +3,7 @@ package com.example.user.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 
 @Entity
@@ -11,8 +11,8 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID userId;
+    @GeneratedValue(strategy = GenerationType.Long)
+    private Long userId;
 
     private String fullName;
 
@@ -44,11 +44,11 @@ public class User {
     }
 
     // Getters and Setters
-    public UUID getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

@@ -3,13 +3,13 @@ package com.example.user.config;
 import java.util.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
+
 
 public class SingletonSessionManager {
 
     private static SingletonSessionManager instance;
 
-    private final Set<UUID> activeUserSessions;
+    private final Set<Long> activeUserSessions;
 
     // Private constructor to prevent direct instantiation
     private SingletonSessionManager() {
@@ -25,17 +25,17 @@ public class SingletonSessionManager {
     }
 
     // Add a user to active session (Login)
-    public void startSession(UUID userId) {
+    public void startSession(Long userId) {
         activeUserSessions.add(userId);
     }
 
     // Remove a user from active session (Logout)
-    public void endSession(UUID userId) {
+    public void endSession(Long userId) {
         activeUserSessions.remove(userId);
     }
 
     // Check if user is logged in
-    public boolean isLoggedIn(UUID userId) {
+    public boolean isLoggedIn(Long userId) {
         return activeUserSessions.contains(userId);
     }
 
