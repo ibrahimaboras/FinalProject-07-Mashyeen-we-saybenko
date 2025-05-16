@@ -2,6 +2,9 @@ package com.example.user.command;
 
 import com.example.user.model.UserProfile;
 import com.example.user.service.UserService;
+import org.springframework.http.ResponseEntity;
+
+
 
 public class UpdateProfileCommand implements Command {
 
@@ -16,7 +19,7 @@ public class UpdateProfileCommand implements Command {
     }
 
     @Override
-    public void execute() {
-        userService.updateUserProfile(userId, updatedProfile);
+    public ResponseEntity<?> execute() {
+        return ResponseEntity.ok(userService.updateUserProfile(userId, updatedProfile));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.user.dto;
 
+
 public class ChangePasswordDTO {
     private Long userId;
     private String newPassword;

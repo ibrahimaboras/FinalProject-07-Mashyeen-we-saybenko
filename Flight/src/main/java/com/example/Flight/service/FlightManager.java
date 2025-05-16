@@ -73,13 +73,19 @@ public class FlightManager {
 
     // Additional functionality
 
+    public List<Flight> filterFlightsByOriginAndDestination(
+            String origin, 
+            String destination) {
+        return flightRepository.findByOriginAndDestination(origin, destination);
+    }
+
     public List<Flight> filterFlightsByDestinationAndDate(
             String origin,
-            String destination, 
-            LocalDateTime startDate, 
-            LocalDateTime endDate) {
+            String destination,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime) {
         return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
-            origin, destination, startDate, endDate);
+                origin, destination, startDateTime, endDateTime);
     }
 
     public boolean checkSeatAvailability(Long flightId, String seatNumber) {
@@ -128,8 +134,11 @@ public class FlightManager {
     /**
      * Get flights sorted by minimum available price
      */
-    public List<Flight> getFlightsSortedByMinPrice() {
-        return priceRepository.findFlightsWithMinPrice().stream()
+    public List<Flight> getFlightsSortedByMinPrice(
+            String origin, 
+            String destination)  {
+        List<Flight> flights = filterFlightsByOriginAndDestination(origin, destination);
+        return priceRepository.findMinPricesForFlights(flights).stream()
             .map(result -> (Flight) result[0])
             .collect(Collectors.toList());
     }
