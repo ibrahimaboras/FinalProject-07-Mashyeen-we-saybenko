@@ -5,7 +5,6 @@ import com.example.user.repository.UserRepository;
 import com.example.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 
-
 public class LogoutCommand implements Command {
 
     private final UserService userService;
@@ -20,7 +19,7 @@ public class LogoutCommand implements Command {
 
     @Override
     public ResponseEntity<?>  execute() {
-
+//        return ResponseEntity.ok(userService.logout(userId));
         if (!userRepository.existsById(userId)) {
             return ResponseEntity.status(404).body("User not found");
         }

@@ -26,7 +26,7 @@ public class LoginCommand implements Command {
 
     @Override
     public ResponseEntity<?> execute() {
-
+       // return ResponseEntity.ok(userService.login(loginDTO.getEmail(), loginDTO.getPassword()));
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.getEmail());
         if (optionalUser.isEmpty()) {
             return  buildErrorResponse(HttpStatus.UNAUTHORIZED, "User not found");

@@ -15,12 +15,12 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 
-import java.util.*;
 
-// use command
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -35,7 +35,6 @@ public class UserService {
     private LoginCommand loginCommand;
     private LogoutCommand logoutCommand;
     private UpdateProfileCommand updateProfileCommand;
-    private RestTemplate restTemplate;
 
 
     @Value("${booking.service.url}")
@@ -43,11 +42,10 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserProfileRepository userProfileRepository, RestTemplate restTemplate
+                       UserProfileRepository userProfileRepository
     ) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
-        this.restTemplate = restTemplate;
     }
 
     // Register User
@@ -59,6 +57,18 @@ public class UserService {
     // Login
     //Consider for better security not giving them a direct answer of whether it is the email or password??
     public ResponseEntity<?> login(String email, String password) {
+//        Optional<User> optionalUser = userRepository.findByEmail(email);
+//        if (optionalUser.isEmpty()) {
+//            throw new RuntimeException("User not found");
+//        }
+//
+//        User user = optionalUser.get();
+//        if (!user.getPassword().equals(password)) {
+//            throw new RuntimeException("Incorrect password");
+//        }
+//
+//        SingletonSessionManager.getInstance().startSession(user.getUserId());
+//        return user;
         LoginDTO loginDTO = new LoginDTO();
         loginDTO.setEmail(email);
         loginDTO.setPassword(password);
@@ -81,7 +91,7 @@ public class UserService {
     }
 
     // Get user by ID
-  //  @Cacheable (value = "users", key = "#userId")
+    @Cacheable (value = "users", key = "#userId")
     public User getUserById(Long userId) {
 
         return userRepository.findById(userId)
@@ -95,6 +105,29 @@ public class UserService {
         return deleteUserCommand.execute();
     }
 
+//    // Update Profile
+//    @CachePut(value = "userProfiles", key = "#userId") // Update the UserProfile cache
+//    public UserProfile updateUserProfile(Long userId, UserProfile updatedProfile) {
+//        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
+//            throw new RuntimeException("User is not logged in.");
+//        }
+//
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        UserProfile profile = user.getProfile();
+//
+//        if (profile == null) {
+//            updatedProfile.setUser(user);
+//            return userProfileRepository.save(updatedProfile);
+//        } else {
+//            profile.setNationality(updatedProfile.getNationality());
+//            profile.setPassportNumber(updatedProfile.getPassportNumber());
+//            profile.setGender(updatedProfile.getGender());
+//            profile.setDateOfBirth(updatedProfile.getDateOfBirth());
+//            return userProfileRepository.save(profile);
+//        }
+//    }
 
     public UserProfile updateUserProfile(Long userId, UserProfile updatedProfile) {
         if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
@@ -129,6 +162,8 @@ public class UserService {
     }
 
 
+
+
     // View Past Flights
 //    @Cacheable(value = "pastFlights", key = "#userId")
 //    public List<PastFlightDTO> viewPastFlights(Long userId) {
@@ -139,23 +174,6 @@ public class UserService {
 //        String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
 //
 //        try {
-//            return Arrays.asList(response);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());
-//        }
-//    }
-//
-//    // View Past Flights
-//    public List<PastFlightDTO> viewPastFlights(Long userId) {
-//        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
-//            throw new RuntimeException("User is not logged in.");
-//        }
-//
-//       String url = bookingServiceUrl + "/bookings/past-flights/" + userId;
-//
-//
-//        try {
-//            PastFlightDTO[] response = restTemplate.getForObject(url, PastFlightDTO[].class);
 //            return Arrays.asList(response);
 //        } catch (Exception e) {
 //            throw new RuntimeException("Failed to retrieve past flights: " + e.getMessage());

@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/users")
@@ -42,14 +40,25 @@ public class UserController {
     // Logout
     @PostMapping("/logout/{userId}")
     public ResponseEntity<?> logout(@PathVariable Long userId) {
-           return ResponseEntity.ok(userService.logout(userId));
+        //logoutCommand = new LogoutCommand(userService, userId);
+        //return logoutCommand.execute();
+        return ResponseEntity.ok(userService.logout(userId));
     }
 
     // Change Password
     @PutMapping("/change-password")
     public ResponseEntity<?>changePassword(@RequestBody ChangePasswordDTO dto) {
+//        changePasswordCommand = new ChangePasswordCommand(userService, dto.getUserId(), dto.getNewPassword());
+//        return changePasswordCommand.execute();
         return userService.changePassword(dto.getUserId(), dto.getNewPassword());
     }
+
+//
+//    // View Past Flights
+//    @GetMapping("/{userId}/past-flights")
+//    public ResponseEntity<List<PastFlightDTO>> viewPastFlights(@PathVariable Long userId) {
+//        return ResponseEntity.ok(userService.viewPastFlights(userId));
+//    }
 
     // Get user by ID
     @GetMapping("/{userId}")
@@ -57,21 +66,20 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    // View Past Flights
-//    @GetMapping("/{userId}/past-flights")
-//    public ResponseEntity<List<PastFlightDTO>> viewPastFlights(@PathVariable Long userId) {
-//        return ResponseEntity.ok(userService.viewPastFlights(userId));
-//    }
-
     // Delete user
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+//        deleteUserCommand = new DeleteUserCommand(userService, userId);
+//        return deleteUserCommand.execute();
+
         return userService.deleteUser(userId);
     }
 
     // Update or add user profile
     @PutMapping("/{userId}/profile")
     public ResponseEntity<?> updateProfile(@PathVariable Long userId, @RequestBody UserProfile profile) {
+//      updateProfileCommand = new UpdateProfileCommand(userService, userId, profile);
+//      return updateProfileCommand.execute();
         return userService.updateUserProfileWithMessage(userId, profile);
     }
     // Get user by full name
