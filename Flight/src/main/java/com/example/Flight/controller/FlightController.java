@@ -64,7 +64,7 @@ public class FlightController {
     public List<Flight> searchFlightsByOriginAndDestination(
             @RequestParam String origin,
             @RequestParam String destination) {
-        return flightManager.filterFlightsByOriginAndDestination(origin, destination);
+        return flightService.filterFlightsByOriginAndDestination(origin, destination);
     }
 
     @GetMapping("/search/destinationAndDate")
@@ -73,7 +73,7 @@ public class FlightController {
             @RequestParam String destination,
             @RequestParam LocalDateTime startTime,
             @RequestParam LocalDateTime endTime) {
-        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startTime, endTime);
+        return flightService.filterFlightsByDestinationAndDate(origin, destination, startTime, endTime);
     }
 
     @GetMapping("/status/{status}")
@@ -120,7 +120,7 @@ public class FlightController {
     public List<Flight> getFlightsSortedByPrice(
             @RequestParam String origin,
             @RequestParam String destination) {
-        return flightManager.getFlightsSortedByMinPrice(origin, destination);
+        return flightService.getFlightsSortedByMinPrice(origin, destination);
     }
 
     @GetMapping("/sorted/price/{classType}")

@@ -1,14 +1,24 @@
 package com.example.Flight.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.Flight.model.Flight;
 import com.example.Flight.repository.FlightRepository;
+import com.example.Flight.repository.PriceRepository;
 
 @Service
 public class FlightService {
     // In a real app, this would be a database repository (e.g., JPA, MongoDB)
     private final FlightRepository flightRepository; 
+
+    @Autowired
+    private PriceRepository priceRepository;
 
     public FlightService(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
@@ -67,5 +77,32 @@ public class FlightService {
             return true;
         }
         return false;
+    }
+    @Cacheable(value = "flightsByOriginDestination", key = "#origin + '-' + #destination")
+    public List<Flight> filterFlightsByOriginAndDestination(
+            String origin, 
+            String destination) {
+        return flightRepository.findByOriginAndDestination(origin, destination);
+    }
+    @Cacheable(
+            value = "flightsByOriginDestinationDate",
+            key = "#origin + '-' + #destination + '-' + #startDateTime.toString() + '-' + #endDateTime.toString()"
+    )
+    public List<Flight> filterFlightsByDestinationAndDate(
+            String origin,
+            String destination,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime) {
+        return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
+                origin, destination, startDateTime, endDateTime);
+    }
+    @Cacheable(value = "flightsByPrice", key = "#origin + '-' + #destination")
+    public List<Flight> getFlightsSortedByMinPrice(
+            String origin, 
+            String destination)  {
+        List<Flight> flights = filterFlightsByOriginAndDestination(origin, destination);
+        return priceRepository.findMinPricesForFlights(flights).stream()
+            .map(result -> (Flight) result[0])
+            .collect(Collectors.toList());
     }
 }
