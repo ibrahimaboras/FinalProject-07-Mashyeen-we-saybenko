@@ -4,6 +4,7 @@ import com.example.Flight.model.Flight;
 import com.example.Flight.model.Price;
 import com.example.Flight.model.Seat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.Flight.repository.FlightRepository;
@@ -72,13 +73,18 @@ public class FlightManager {
     }
 
     // Additional functionality
-
+    // Get user by full name
+    @Cacheable(value = "flightsByOriginDestination", key = "#origin + '-' + #destination")
     public List<Flight> filterFlightsByOriginAndDestination(
-            String origin, 
+            String origin,
             String destination) {
         return flightRepository.findByOriginAndDestination(origin, destination);
     }
 
+    @Cacheable(
+            value = "flightsByOriginDestinationDate",
+            key = "#origin + '-' + #destination + '-' + #startDateTime.toString() + '-' + #endDateTime.toString()"
+    )
     public List<Flight> filterFlightsByDestinationAndDate(
             String origin,
             String destination,
@@ -134,6 +140,7 @@ public class FlightManager {
     /**
      * Get flights sorted by minimum available price
      */
+    @Cacheable(value = "flightsByPrice", key = "#origin + '-' + #destination")
     public List<Flight> getFlightsSortedByMinPrice(
             String origin, 
             String destination)  {

@@ -60,6 +60,7 @@ public class FlightController {
         return flightManager.getAllFlights();
     }
 
+    // Check Ziady_flight branch For Redis Caching
     @GetMapping("/search/originAndDestination")
     public List<Flight> searchFlightsByOriginAndDestination(
             @RequestParam String origin,
@@ -67,6 +68,7 @@ public class FlightController {
         return flightManager.filterFlightsByOriginAndDestination(origin, destination);
     }
 
+    // Ziady_flight branch For Redis Caching
     @GetMapping("/search/destinationAndDate")
     public List<Flight> searchFlights(
             @RequestParam String origin,
@@ -115,7 +117,7 @@ public class FlightController {
     }
 
     // Pricing Related Endpoints
-
+    // Ziady_flight branch For Redis Caching
     @GetMapping("/sorted/price")
     public List<Flight> getFlightsSortedByPrice(
             @RequestParam String origin,
