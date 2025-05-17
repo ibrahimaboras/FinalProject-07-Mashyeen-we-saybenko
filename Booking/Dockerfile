@@ -1,7 +1,10 @@
 FROM openjdk:25-ea-4-jdk-oraclelinux9
 
+# Set working directory inside container
 WORKDIR /app
 
-COPY target/*.jar /target/app.jar
+# Copy the compiled jar to the container
+COPY target/*.jar /app/app.jar
 
-ENTRYPOINT ["java", "-jar", "/target/app.jar"]
+# Run the jar
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]\
