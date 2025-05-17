@@ -81,7 +81,7 @@ services:
       - redis_flight_volume:/data
     networks:
       - spring
-    restart: unless-stopped 
+    restart: unless-stopped
 
   pgadmin:
     container_name: pgadmin
