@@ -1,39 +1,30 @@
 package com.example.Booking.Events;
 
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
-    public static final String EXCHANGE = "booking.exchange";
-    public static final String CREATED_ROUTING_KEY  = "booking.created";
-    public static final String CANCELLED_ROUTING_KEY = "booking.cancelled";
-    public static final String CREATED_QUEUE  = "booking.created.queue";
-    public static final String CANCELLED_QUEUE = "booking.cancelled.queue";
 
     @Bean
-    public TopicExchange bookingExchange() {
-        return new TopicExchange(EXCHANGE);
+    public Queue bookingCommandQueue() {
+        return new Queue("booking.commands", true);
     }
 
     @Bean
-    public Queue createdQueue() {
-        return QueueBuilder.durable(CREATED_QUEUE).build();
+    public Jackson2JsonMessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public Queue cancelledQueue() {
-        return QueueBuilder.durable(CANCELLED_QUEUE).build();
-    }
-
-    @Bean
-    public Binding createdBinding(Queue createdQueue, TopicExchange exchange) {
-        return BindingBuilder.bind(createdQueue).to(exchange).with(CREATED_ROUTING_KEY);
-    }
-
-    @Bean
-    public Binding cancelledBinding(Queue cancelledQueue, TopicExchange exchange) {
-        return BindingBuilder.bind(cancelledQueue).to(exchange).with(CANCELLED_ROUTING_KEY);
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
+                                         Jackson2JsonMessageConverter converter) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter);
+        return rabbitTemplate;
     }
 }

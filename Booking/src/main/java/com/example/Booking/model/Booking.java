@@ -1,5 +1,7 @@
-package com.example.Booking.model;
+package com.example.Booking.model;// com/example/booking/model/Booking.java
 
+import com.example.Booking.model.FlightTicket;
+import com.example.Booking.model.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,29 +35,24 @@ public class Booking {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-
     public Booking() {
         this.tickets = new ArrayList<>();
         this.payments = new ArrayList<>();
-        this.status   = BookingStatus.PENDING;
+        this.status = BookingStatus.PENDING;
     }
 
-
-    public Booking(
-            UUID bookingId,
-            UUID userId,
-            List<FlightTicket> tickets,
-            List<Payment> payments,
-            BookingStatus status,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
-    ) {
+    public Booking(UUID bookingId,
+                   UUID userId,
+                   List<FlightTicket> tickets,
+                   List<Payment> payments,
+                   BookingStatus status,
+                   LocalDateTime createdAt,
+                   LocalDateTime updatedAt) {
         this.bookingId = bookingId;
-        this.userId    = userId;
-        this.tickets   = (tickets   != null ? tickets   : new ArrayList<>());
-        this.payments  = (payments  != null ? payments  : new ArrayList<>());
-        this.status    = status;
+        this.userId = userId;
+        this.tickets = (tickets != null ? tickets : new ArrayList<>());
+        this.payments = (payments != null ? payments : new ArrayList<>());
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

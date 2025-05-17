@@ -1,7 +1,6 @@
-package com.example.Booking.model;
+package com.example.Booking.model;// com/example/booking/model/Payment.java
 
-import com.example.Booking.model.Booking;
-import com.example.Booking.model.PaymentStatus;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,20 +9,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "payments")
 public class Payment {
-
-    public Payment(UUID paymentId, Booking booking, BigDecimal amount, String currency, PaymentStatus status, LocalDateTime paidAt) {
-        this.paymentId = paymentId;
-        this.booking = booking;
-        this.amount = amount;
-        this.currency = currency;
-        this.status = status;
-        this.paidAt = paidAt;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID paymentId;
@@ -41,7 +31,19 @@ public class Payment {
 
     private LocalDateTime paidAt;
 
-    public Payment() {
+    public Payment() { }
 
+    public Payment(UUID paymentId,
+                   Booking booking,
+                   BigDecimal amount,
+                   String currency,
+                   PaymentStatus status,
+                   LocalDateTime paidAt) {
+        this.paymentId = paymentId;
+        this.booking = booking;
+        this.amount = amount;
+        this.currency = currency;
+        this.status = status;
+        this.paidAt = paidAt;
     }
 }

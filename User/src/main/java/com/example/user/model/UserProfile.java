@@ -2,7 +2,9 @@ package com.example.user.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "user_profiles")

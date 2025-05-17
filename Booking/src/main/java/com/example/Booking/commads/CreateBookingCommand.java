@@ -1,29 +1,33 @@
-package com.example.Booking.commads;// CreateBookingCommand.java
+package com.example.Booking.commads;
 
+import com.example.Booking.model.SeatClass;
+import lombok.*;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Create a new Booking for a user, optionally
- * with an initial list of tickets.
- */
-@Getter @RequiredArgsConstructor
-public class CreateBookingCommand {
-    private final UUID userId;
-    private final List<InitialTicket> tickets;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateBookingCommand implements Command , Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private UUID userId;
+    private List<InitialTicket> tickets;
 
-    @Getter @RequiredArgsConstructor
+    @Getter @Setter @NoArgsConstructor @AllArgsConstructor
     public static class InitialTicket {
-        private final String fullName;
-        private final String nationality;
-        private final String passportNumber;
-        private final String gender;
-        private final java.time.LocalDate dateOfBirth;
-        private final UUID flightId;
-        private final UUID seatId;
+        private String fullName;
+        private String nationality;
+        private String passportNumber;
+        private String gender;
+        private LocalDate dateOfBirth;
+        private UUID flightId;
+        private UUID seatId;
+        private SeatClass seatClass;
     }
 }
