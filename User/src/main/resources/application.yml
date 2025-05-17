@@ -29,3 +29,21 @@
 #  booking:
 #    service:
 #      url: http://booking:8081  # Assuming the service exists
+
+
+# THIS PART HAS TO BE ADDED FOR THE GATEWAY
+# DELETE THIS AFTER EDITING THE CODE ABOVE AND IMPLENTING THE BELOW CODE
+spring:
+  application:
+    name: user-service
+  server:
+    port: 8081
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    hostname: localhost

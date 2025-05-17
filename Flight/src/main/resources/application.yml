@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Flight
+    name: flight-service # ← CHANGED THIS FROM Flight TO flight-service FOR GATEWAY
 
   datasource:
     url: jdbc:postgresql://db:5432/flightdb
@@ -24,4 +24,12 @@ spring:
     type: redis
 
 server:
-  port: 8080
+  port: 8082 # ← CHANGED THIS FROM 8080 TO 8082 FOR GATEWAY
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
