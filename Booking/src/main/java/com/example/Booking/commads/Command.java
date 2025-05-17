@@ -1,5 +1,7 @@
 package com.example.Booking.commads;
 
-public interface Command {
+import java.io.Serializable;
+
+public interface Command  extends Serializable {
 
 }

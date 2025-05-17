@@ -30,4 +30,20 @@ public class CreateBookingCommand implements Command , Serializable {
         private UUID seatId;
         private SeatClass seatClass;
     }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public List<InitialTicket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<InitialTicket> tickets) {
+        this.tickets = tickets;
+    }
 }
