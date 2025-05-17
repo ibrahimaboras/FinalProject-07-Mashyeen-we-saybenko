@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.Flight.model.Flight;
@@ -77,13 +78,16 @@ public class FlightService {
         }
         return false;
     }
-
+    @Cacheable(value = "flightsByOriginDestination", key = "#origin + '-' + #destination")
     public List<Flight> filterFlightsByOriginAndDestination(
             String origin, 
             String destination) {
         return flightRepository.findByOriginAndDestination(origin, destination);
     }
-
+    @Cacheable(
+            value = "flightsByOriginDestinationDate",
+            key = "#origin + '-' + #destination + '-' + #startDateTime.toString() + '-' + #endDateTime.toString()"
+    )
     public List<Flight> filterFlightsByDestinationAndDate(
             String origin,
             String destination,
@@ -92,7 +96,7 @@ public class FlightService {
         return flightRepository.findByOriginAndDestinationAndDepartureTimeBetween(
                 origin, destination, startDateTime, endDateTime);
     }
-
+    @Cacheable(value = "flightsByPrice", key = "#origin + '-' + #destination")
     public List<Flight> getFlightsSortedByMinPrice(
             String origin, 
             String destination)  {
