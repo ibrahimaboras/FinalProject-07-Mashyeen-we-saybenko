@@ -1,0 +1,257 @@
+services:
+  postgres_user:
+    container_name: postgres_user
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user
+    volumes:
+      - postgres_user_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres_user
+    restart: unless-stopped
+
+  postgres_flight:
+    container_name: postgres_flight
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flight
+    volumes:
+      - postgres_flight_volume:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - postgres_flight
+    restart: unless-stopped
+
+  postgres_booking:
+    container_name: postgres_booking
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: booking
+    volumes:
+      - postgres_booking_volume:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - postgres_booking
+    restart: unless-stopped
+
+  mongo_notification:
+    container_name: mongo_notification
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: notification
+    volumes:
+      - mongo_notification_volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - mongo_notification
+    restart: unless-stopped
+
+  redis_user:
+    container_name: redis_user
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_user_volume:/data
+    networks:
+      - redis_user
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres_user
+      - postgres_flight
+      - postgres_booking
+    restart: unless-stopped
+    depends_on:
+      - postgres_user
+      - postgres_flight
+      - postgres_booking
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8000:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo_notification:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      - mongo_notification
+    restart: unless-stopped
+    depends_on:
+      - mongo_notification
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redis_insight
+    ports:
+      - "5540:5540"
+    networks:
+      - redis_user
+    restart: always
+    depends_on:
+      - redis_user
+
+  rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring
+
+  apigw:
+    build: ./apigw
+    container_name: apigw
+    ports:
+      - "8084:8084"
+    environment:
+      - spring.cloud.gateway.routes[0].id=user
+      - spring.cloud.gateway.routes[0].uri=http://customer:8080
+      - spring.cloud.gateway.routes[0].predicates[0]=Path=/user/**
+
+      - spring.cloud.gateway.routes[1].id=flight
+      - spring.cloud.gateway.routes[1].uri=http://flight:8080
+      - spring.cloud.gateway.routes[1].predicates[0]=Path=/flight/**
+
+      - spring.cloud.gateway.routes[2].id=booking
+      - spring.cloud.gateway.routes[2].uri=http://booking:8080
+      - spring.cloud.gateway.routes[2].predicates[0]=Path=/booking/**
+
+      - spring.cloud.gateway.routes[3].id=notification
+      - spring.cloud.gateway.routes[3].uri=http://notification:8080
+      - spring.cloud.gateway.routes[3].predicates[0]=Path=/notification/**
+    networks:
+      - spring
+    restart: unless-stopped
+
+  user:
+    build: ./User
+    container_name: user
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_user:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq:5672
+      CLIENTS_BOOKING_URL: http://booking:8080
+    networks:
+      - spring
+      - postgres_user
+      - redis_user
+    depends_on:
+      - postgres_user
+      - redis_user
+
+  flight:
+    build: ./Flight
+    container_name: flight
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_flight:5432/flight
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - spring
+      - postgres_flight
+    depends_on:
+      - postgres_flight
+
+  booking:
+    build: ./Booking
+    container_name: booking
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_booking:5432/booking
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      spring.datasource.driver-class-name: org.postgresql.Driver
+      spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+      spring.jpa.hibernate.ddl-auto: create-drop
+      spring.jpa.generate-ddl: true
+      spring.jpa.show-sql: true
+      spring.jpa.properties.hibernate.format_sql: true
+      spring.jpa.properties.hibernate.use_sql_comments: true
+      spring.rabbitmq.addresses: rabbitmq:5672
+      CLIENTS_FLIGHT_URL: http://flight:8080
+    networks:
+      - spring
+      - postgres_booking
+      - rabbitmq
+    depends_on:
+      - postgres_booking
+      - rabbitmq
+
+  notification:
+    build: ./Notification
+    container_name: notification
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://root:example@mongo_notification:27017/notification?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: notification
+      SPRING_DATA_MONGODB_USERNAME: root
+      SPRING_DATA_MONGODB_PASSWORD: example
+      spring.data.mongodb.port: 27017
+      spring.data.mongodb.host: mongo_notification
+      spring.rabbitmq.addresses: rabbitmq:5672
+    networks:
+      - spring
+      - mongo_notification
+      - rabbitmq
+    depends_on:
+      - mongo_notification
+      - rabbitmq
+
+networks:
+  postgres_user:
+    driver: bridge
+  postgres_flight:
+    driver: bridge
+  postgres_booking:
+    driver: bridge
+  mongo_notification:
+    driver: bridge
+  redis_user:
+    driver: bridge
+  rabbitmq:
+    driver: bridge
+  spring:
+    driver: bridge
+
+volumes:
+  postgres_user_volume: {}
+  postgres_flight_volume: {}
+  postgres_booking_volume: {}
+  mongo_notification_volume:
+  redis_user_volume:
+  pgadmin:
