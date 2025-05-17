@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8083 # UNCHANGED FOR GATEWAY SINCE IT IS NOT THE DEFAULT PORT 8080
 
 spring:
   application:
