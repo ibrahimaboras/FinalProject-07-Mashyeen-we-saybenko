@@ -28,6 +28,7 @@ public class Booking {
     @JsonManagedReference
     private List<FlightTicket> tickets;
 
+
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();

@@ -17,9 +17,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
-    private final PaymentService paymentService;
-    private final CommandGateway gateway;
 
+    private final CommandGateway gateway;
+    private final PaymentService paymentService;
 
     public PaymentController(CommandGateway gateway , PaymentService paymentService) {
         this.gateway = gateway;
@@ -35,7 +35,7 @@ public class PaymentController {
         );
         return ResponseEntity.accepted().build();
     }
-
+  
     @GetMapping
     public List<Payment> list(
     ) {

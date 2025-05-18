@@ -18,12 +18,10 @@ public class CancelBookingCommand implements Command, Serializable {
 
     private UUID bookingId;
 
-    // explicit one-arg constructor so `new CancelBookingCommand(id)` compiles
     public CancelBookingCommand(UUID bookingId) {
         this.bookingId = bookingId;
     }
 
-    // if you’re using the `execute()`-based approach, include these:
     @JsonIgnore
     private transient BookingService bookingService;
 
@@ -32,12 +30,18 @@ public class CancelBookingCommand implements Command, Serializable {
 
     @Override
     public void execute() {
+        if (bookingService == null || rabbit == null) {
+            throw new IllegalStateException("Dependencies not injected");
+        }
+
         bookingService.cancelBooking(bookingId);
         rabbit.convertAndSend(
                 RabbitConfig.EXCHANGE,
                 RabbitConfig.ROUTING_CANCELLED,
                 bookingId
         );
-        System.out.println("→ Event: " + RabbitConfig.ROUTING_CANCELLED + " → " + bookingId);
+
+        System.out.println("✅ Booking cancelled, event sent → " + bookingId);
     }
 }
+

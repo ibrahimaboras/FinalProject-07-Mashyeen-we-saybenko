@@ -31,10 +31,13 @@ public class BookingCommandHandler {
                     AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE,
                     false
             );
+
+            System.out.println("🔧 Executing command: " + cmd.getClass().getSimpleName());
             cmd.execute();
+
         } catch (Exception e) {
             System.err.println("❌ Command execution failed: " + e.getMessage());
-            // Optional: log error or send to DLQ
         }
     }
+
 }

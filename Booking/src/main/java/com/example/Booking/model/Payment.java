@@ -36,7 +36,21 @@ public class Payment {
 
     private LocalDateTime paidAt;
 
-    public Payment() { }
+    public Payment() {
+
+    }
+
+    public Payment(Booking booking,
+                   BigDecimal amount,
+                   String currency,
+                   PaymentStatus status,
+                   LocalDateTime paidAt) {
+        this.booking = booking;
+        this.amount = amount;
+        this.currency = currency;
+        this.status = status;
+        this.paidAt = paidAt;
+    }
 
     public Payment(UUID paymentId,
                    Booking booking,
@@ -51,4 +65,5 @@ public class Payment {
         this.status = status;
         this.paidAt = paidAt;
     }
+
 }
