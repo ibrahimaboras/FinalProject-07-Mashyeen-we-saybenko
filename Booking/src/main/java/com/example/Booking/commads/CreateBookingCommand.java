@@ -19,6 +19,8 @@ public class CreateBookingCommand implements Command , Serializable {
     private UUID userId;
     private List<InitialTicket> tickets;
 
+
+
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor
     public static class InitialTicket {
         private String fullName;

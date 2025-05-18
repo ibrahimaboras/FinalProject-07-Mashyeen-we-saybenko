@@ -1,7 +1,9 @@
 package com.example.Booking.controller;
 
+import com.example.Booking.Events.RabbitConfig;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.MakePaymentCommand;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,11 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<Void> pay(@RequestBody MakePaymentCommand cmd) {
-        gateway.send(cmd);
+        gateway.send(
+                RabbitConfig.EXCHANGE,
+                RabbitConfig.ROUTING_PAYMENT,
+                cmd
+        );
         return ResponseEntity.accepted().build();
     }
 }

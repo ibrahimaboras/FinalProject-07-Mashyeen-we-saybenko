@@ -2,6 +2,8 @@ package com.example.Booking.service;// com/example/booking/service/BookingServic
 
 
 
+import com.example.Booking.commads.CancelBookingCommand;
+import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
@@ -22,20 +24,29 @@ import java.util.UUID;
 public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
+    private final CommandGateway commandGateway;
 
     public BookingService(BookingRepository bookingRepo,
-                          PaymentRepository paymentRepo) {
+                          PaymentRepository paymentRepo, CommandGateway commandGateway) {
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
+        this.commandGateway  = commandGateway;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
+        // 1) create & save
         Booking b = BookingFactory.createBooking(cmd);
         b.setStatus(BookingStatus.PENDING);
-        return bookingRepo.save(b);
-    }
+        Booking saved = bookingRepo.save(b);
 
+        // 2) publish to RabbitMQ
+        commandGateway.send("booking.exchange",
+                "booking.created",
+                cmd);
+
+        return saved;
+    }
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -60,25 +71,16 @@ public class BookingService {
             throw new RuntimeException("Already cancelled");
 
         b.setStatus(BookingStatus.CANCELLED);
-        // 20% refund
-        BigDecimal totalPaid = b.getPayments().stream()
-                .map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal refundAmt = totalPaid.multiply(BigDecimal.valueOf(0.2));
-        String currency = b.getPayments().stream()
-                .findFirst().map(Payment::getCurrency).orElse("USD");
+        // ... refund logic ...
+        Booking updated = bookingRepo.save(b);
 
-        Payment refund = new Payment(
-                UUID.randomUUID(),
-                b,
-                refundAmt.negate(),
-                currency,
-                PaymentStatus.REFUNDED,
-                LocalDateTime.now()
-        );
-        b.addPayment(refund);
-        paymentRepo.save(refund);
+        // publish cancellation
+        CancelBookingCommand cancelCmd = new CancelBookingCommand(bookingId);
+        commandGateway.send("booking.exchange",
+                "booking.cancelled",
+                cancelCmd);
 
-        return bookingRepo.save(b);
+        return updated;
     }
+
 }

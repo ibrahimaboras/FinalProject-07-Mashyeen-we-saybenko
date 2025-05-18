@@ -1,8 +1,10 @@
 package com.example.Booking.controller;
 
+import com.example.Booking.Events.RabbitConfig;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
+
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.service.BookingService;
@@ -26,7 +28,11 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CreateBookingCommand cmd) {
-        gateway.send(cmd);
+        gateway.send(
+                RabbitConfig.EXCHANGE,
+                RabbitConfig.ROUTING_CREATED,
+                cmd
+        );
         return ResponseEntity.accepted().build();
     }
 
@@ -40,14 +46,19 @@ public class BookingController {
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) BookingStatus status
     ) {
-        if (userId != null) return service.getBookingsByUser(userId);
-        if (status != null) return service.getBookingsByStatus(status);
+        if (userId != null)   return service.getBookingsByUser(userId);
+        if (status != null)   return service.getBookingsByStatus(status);
         return service.getAllBookings();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancel(@PathVariable UUID id) {
-        gateway.send(new CancelBookingCommand(id));
+        CancelBookingCommand cancelCmd = new CancelBookingCommand(id);
+        gateway.send(
+                RabbitConfig.EXCHANGE,
+                RabbitConfig.ROUTING_CANCELLED,
+                cancelCmd
+        );
         return ResponseEntity.accepted().build();
     }
 }
