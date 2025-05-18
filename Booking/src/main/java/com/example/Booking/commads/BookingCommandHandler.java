@@ -1,5 +1,6 @@
 package com.example.Booking.commads;
 
+import com.example.Booking.Events.RabbitConfig;
 import com.example.Booking.service.BookingService;
 import com.example.Booking.service.PaymentService;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -20,13 +21,12 @@ public class BookingCommandHandler {
         this.paymentService = paymentService;
     }
 
-    @RabbitListener(
-            bindings = @QueueBinding(
-                    value = @Queue(value = "booking.commands", durable = "true"),
-                    exchange = @Exchange(value = "booking.exchange", type = ExchangeTypes.DIRECT),
-                    key = "booking.commands"
-            )
-    )
+    // BookingCommandHandler.java
+    @RabbitListener(bindings = @QueueBinding(
+            value    = @Queue(value = RabbitConfig.BOOKING_ROUTING_KEY, durable = "true"),
+            exchange = @Exchange(value = RabbitConfig.BOOKING_EXCHANGE, type = ExchangeTypes.DIRECT),
+            key      = RabbitConfig.BOOKING_ROUTING_KEY
+    ))
     public void handle(Command cmd) {
         if (cmd instanceof CreateBookingCommand c) {
             bookingService.createBooking(c);

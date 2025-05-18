@@ -1,25 +1,29 @@
 package com.example.Booking.commads;
 
-import com.example.Booking.commads.Command;
+import com.example.Booking.Events.RabbitConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import static com.example.Booking.Events.RabbitConfig.BOOKING_EXCHANGE;
+import static com.example.Booking.Events.RabbitConfig.BOOKING_ROUTING_KEY;
+
+
+@Component
 public class CommandGateway {
+
     private final RabbitTemplate rabbit;
-    private final String exchange;
-    private final String routingKey;
 
-    public CommandGateway(RabbitTemplate rabbit,
-                          @Value("${rabbitmq.exchange:booking.exchange}") String exchange,
-                          @Value("${rabbitmq.routing-key:booking.commands}") String routingKey) {
+    public CommandGateway(RabbitTemplate rabbit) {
         this.rabbit = rabbit;
-        this.exchange = exchange;
-        this.routingKey = routingKey;
     }
 
-    public void send(Command cmd) {
-        rabbit.convertAndSend(exchange, routingKey, cmd);
+    /** Publish a CreateBookingCommand as JSON */
+    public void send(CreateBookingCommand cmd) {
+        rabbit.convertAndSend(BOOKING_EXCHANGE, BOOKING_ROUTING_KEY, cmd);
     }
-}
+
+    public void send(CancelBookingCommand cmd) {
+        rabbit.convertAndSend(BOOKING_EXCHANGE, BOOKING_ROUTING_KEY, cmd);
+    }
+    }
+
