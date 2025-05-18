@@ -1,5 +1,6 @@
 package com.example.Booking.model;// com/example/booking/model/FlightTicket.java
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +27,10 @@ public class FlightTicket {
     @Column(nullable = false)
     private SeatClass seatClass;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "booking_id")
+    @JsonBackReference
     private Booking booking;
-
     private UUID flightId;
     private UUID seatId;
 

@@ -30,7 +30,7 @@ public class BookingController {
     public ResponseEntity<Void> create(@RequestBody CreateBookingCommand cmd) {
         gateway.send(
                 RabbitConfig.EXCHANGE,
-                RabbitConfig.ROUTING_CREATED,
+                RabbitConfig.ROUTING_COMMAND,
                 cmd
         );
         return ResponseEntity.accepted().build();
@@ -56,7 +56,7 @@ public class BookingController {
         CancelBookingCommand cancelCmd = new CancelBookingCommand(id);
         gateway.send(
                 RabbitConfig.EXCHANGE,
-                RabbitConfig.ROUTING_CANCELLED,
+                RabbitConfig.ROUTING_COMMAND,
                 cancelCmd
         );
         return ResponseEntity.accepted().build();

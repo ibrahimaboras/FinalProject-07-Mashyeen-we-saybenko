@@ -20,7 +20,7 @@ public class PaymentController {
     public ResponseEntity<Void> pay(@RequestBody MakePaymentCommand cmd) {
         gateway.send(
                 RabbitConfig.EXCHANGE,
-                RabbitConfig.ROUTING_PAYMENT,
+                RabbitConfig.ROUTING_COMMAND,
                 cmd
         );
         return ResponseEntity.accepted().build();

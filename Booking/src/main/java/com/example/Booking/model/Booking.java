@@ -2,6 +2,7 @@ package com.example.Booking.model;// com/example/booking/model/Booking.java
 
 import com.example.Booking.model.FlightTicket;
 import com.example.Booking.model.Payment;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,8 +24,9 @@ public class Booking {
     @Column(nullable = false)
     private UUID userId;
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FlightTicket> tickets = new ArrayList<>();
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<FlightTicket> tickets;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
@@ -63,8 +65,8 @@ public class Booking {
     }
 
     public void addPayment(Payment p) {
-        payments.add(p);
         p.setBooking(this);
+        this.payments.add(p);
     }
 
     @PrePersist

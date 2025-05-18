@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static com.example.Booking.model.BookingStatus.CONFIRMED;
+
 @Service
 public class PaymentService {
     private final BookingRepository bookingRepo;
@@ -28,6 +30,7 @@ public class PaymentService {
     public Payment makePayment(MakePaymentCommand cmd) {
         Booking b = bookingRepo.findById(cmd.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
+
         Payment p = new Payment(
                 UUID.randomUUID(),
                 b,
@@ -36,9 +39,10 @@ public class PaymentService {
                 PaymentStatus.COMPLETED,
                 LocalDateTime.now()
         );
-        b.addPayment(p);
-        b.setStatus(BookingStatus.CONFIRMED);
-        paymentRepo.save(p);
-        return p;
+
+        Payment saved = paymentRepo.save(p);
+        bookingRepo.updateStatus(b.getBookingId(), BookingStatus.CONFIRMED);  // add this custom query
+        return saved;
+
     }
 }
