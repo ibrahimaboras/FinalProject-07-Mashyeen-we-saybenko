@@ -1,7 +1,7 @@
-package com.example.Booking.service;// com/example/booking/service/BookingService.java
+package com.example.Booking.service;
 
-
-
+import com.example.Booking.clients.FlightServiceClient;
+import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CreateBookingCommand;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
@@ -22,23 +22,48 @@ import java.util.UUID;
 public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
+    private final UserServiceClient userServiceClient;
+    private final FlightServiceClient flightServiceClient;
 
     public BookingService(BookingRepository bookingRepo,
-                          PaymentRepository paymentRepo) {
+                          PaymentRepository paymentRepo,
+                          UserServiceClient userServiceClient,
+                          FlightServiceClient flightServiceClient) {
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
+        this.userServiceClient = userServiceClient;
+        this.flightServiceClient = flightServiceClient;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-        Booking b = BookingFactory.createBooking(cmd);
-        b.setStatus(BookingStatus.PENDING);
-        return bookingRepo.save(b);
+        // 1. Validate user exists
+        if (!userServiceClient.userExists(cmd.getUserId())) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+
+        // 2. Validate all tickets
+        for (CreateBookingCommand.InitialTicket ticket : cmd.getTickets()) {
+            // Check seat availability for each flight
+            if (!flightServiceClient.isSeatAvailable(
+                    ticket.getFlightId(),  // Use flightId from each ticket
+                    1                     // Each ticket represents 1 seat
+            )) {
+                throw new IllegalStateException(
+                        "Seat not available for flight: " + ticket.getFlightId()
+                );
+            }
+        }
+
+        // 3. Create and save booking
+        Booking booking = BookingFactory.createBooking(cmd);
+        booking.setStatus(BookingStatus.PENDING);
+        return bookingRepo.save(booking);
     }
 
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
     }
 
     public List<Booking> getAllBookings() {
@@ -55,30 +80,31 @@ public class BookingService {
 
     @Transactional
     public Booking cancelBooking(UUID bookingId) {
-        Booking b = getBooking(bookingId);
-        if (b.getStatus() == BookingStatus.CANCELLED)
-            throw new RuntimeException("Already cancelled");
+        Booking booking = getBooking(bookingId);
 
-        b.setStatus(BookingStatus.CANCELLED);
-        // 20% refund
-        BigDecimal totalPaid = b.getPayments().stream()
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Booking already cancelled");
+        }
+
+        // Process refund
+        BigDecimal totalPaid = booking.getPayments().stream()
+                .filter(p -> p.getStatus() == PaymentStatus.COMPLETED)
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal refundAmt = totalPaid.multiply(BigDecimal.valueOf(0.2));
-        String currency = b.getPayments().stream()
-                .findFirst().map(Payment::getCurrency).orElse("USD");
+
+        BigDecimal refundAmount = totalPaid.multiply(BigDecimal.valueOf(0.2));
 
         Payment refund = new Payment(
                 UUID.randomUUID(),
-                b,
-                refundAmt.negate(),
-                currency,
+                booking,
+                refundAmount.negate(),
+                "USD",
                 PaymentStatus.REFUNDED,
                 LocalDateTime.now()
         );
-        b.addPayment(refund);
-        paymentRepo.save(refund);
 
-        return bookingRepo.save(b);
+        paymentRepo.save(refund);
+        booking.setStatus(BookingStatus.CANCELLED);
+        return bookingRepo.save(booking);
     }
 }

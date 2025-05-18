@@ -30,6 +30,12 @@ spring:
     username: guest
     password: guest
 
+  feign:
+    client:
+      config:
+        default:
+          connectTimeout: 5000
+          readTimeout: 5000
 server:
   port: 8083 # ← CHANGED THIS FROM 8080 TO 8083 FOR GATEWAY
 
