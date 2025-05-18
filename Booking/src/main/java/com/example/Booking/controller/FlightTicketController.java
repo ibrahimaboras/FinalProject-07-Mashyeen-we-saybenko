@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/tickets")
 public class FlightTicketController {
     private final FlightTicketService service;
 

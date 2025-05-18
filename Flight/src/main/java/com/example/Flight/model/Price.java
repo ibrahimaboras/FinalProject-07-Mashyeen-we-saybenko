@@ -23,6 +23,25 @@ public class Price {
     @Column(nullable = false)
     private Double price;
 
+    // Default constructor
+    public Price() {
+    }
+
+    // Parameterized constructor
+    public Price(Flight flight, Seat seat, Double price) {
+        this.flight = flight;
+        this.seat = seat;
+        this.price = price;
+    }
+
+    // Constructor for updating
+    public Price(Long id, Flight flight, Seat seat, Double price) {
+        this.id = id;
+        this.flight = flight;
+        this.seat = seat;
+        this.price = price;
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;

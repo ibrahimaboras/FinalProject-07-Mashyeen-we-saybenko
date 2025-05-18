@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/flights")
+@RequestMapping("")
 public class FlightController {
 
     private final FlightService flightService;
@@ -59,16 +60,20 @@ public class FlightController {
         return flightManager.getAllFlights();
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/originAndDestination")
+    public List<Flight> searchFlightsByOriginAndDestination(
+            @RequestParam String origin,
+            @RequestParam String destination) {
+        return flightService.filterFlightsByOriginAndDestination(origin, destination);
+    }
+
+    @GetMapping("/search/destinationAndDate")
     public List<Flight> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime departureDate) {
-        
-        LocalDateTime startDate = departureDate.withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endDate = departureDate.withHour(23).withMinute(59).withSecond(59);
-        
-        return flightManager.filterFlightsByDestinationAndDate(origin, destination, startDate, endDate);
+            @RequestParam LocalDateTime startTime,
+            @RequestParam LocalDateTime endTime) {
+        return flightService.filterFlightsByDestinationAndDate(origin, destination, startTime, endTime);
     }
 
     @GetMapping("/status/{status}")
@@ -112,8 +117,10 @@ public class FlightController {
     // Pricing Related Endpoints
 
     @GetMapping("/sorted/price")
-    public List<Flight> getFlightsSortedByPrice() {
-        return flightManager.getFlightsSortedByMinPrice();
+    public List<Flight> getFlightsSortedByPrice(
+            @RequestParam String origin,
+            @RequestParam String destination) {
+        return flightService.getFlightsSortedByMinPrice(origin, destination);
     }
 
     @GetMapping("/sorted/price/{classType}")

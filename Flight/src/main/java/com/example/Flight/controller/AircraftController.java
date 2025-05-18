@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/aircrafts")
+@RequestMapping("/aircrafts")
 public class AircraftController {
 
     private final AircraftService aircraftService;

@@ -16,6 +16,8 @@ services:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
       retries: 10
+    networks:
+      - booking-network
     restart: always
 
   rabbitmq:
@@ -24,6 +26,19 @@ services:
     ports:
       - "5672:5672"    # AMQP
       - "15672:15672"  # Management UI
+    networks:
+      - booking-network
+    restart: always
+
+  eureka:
+    image: springcloud/eureka
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+    networks:
+      - booking-network
     restart: always
 
   bookingservice:
@@ -38,10 +53,19 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_started
+      eureka:
+        condition: service_started
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+    networks:
+      - booking-network
     restart: always
 
 volumes:
   pgdata:
+
+networks:
+  booking-network:
+    driver: bridge
