@@ -65,8 +65,9 @@ public class BookingService {
 
     @Transactional
     public Booking cancelBooking(UUID bookingId) {
-        Booking booking = getBooking(bookingId);
-
+        Booking b = getBooking(bookingId);
+        if (b.getStatus() == BookingStatus.CANCELLED)
+            throw new RuntimeException("Already cancelled");
 
         b.setStatus(BookingStatus.CANCELLED);
         // ... refund logic ...
@@ -74,9 +75,9 @@ public class BookingService {
 
         // publish cancellation
         CancelBookingCommand cancelCmd = new CancelBookingCommand(bookingId);
-//        commandGateway.send("booking.exchange",
-//                "booking.cancelled",
-//                cancelCmd);
+        commandGateway.send("booking.exchange",
+                "booking.cancelled",
+                cancelCmd);
 
         return updated;
     }
