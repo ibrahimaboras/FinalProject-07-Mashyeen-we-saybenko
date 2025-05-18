@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+
+import static com.example.Booking.model.BookingStatus.CONFIRMED;
 
 @Service
 public class PaymentService {
@@ -25,20 +28,46 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment makePayment(MakePaymentCommand cmd) {
-        Booking b = bookingRepo.findById(cmd.getBookingId())
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-        Payment p = new Payment(
-                UUID.randomUUID(),
-                b,
-                cmd.getAmount(),
-                cmd.getCurrency(),
-                PaymentStatus.COMPLETED,
-                LocalDateTime.now()
-        );
-        b.addPayment(p);
-        b.setStatus(BookingStatus.CONFIRMED);
-        paymentRepo.save(p);
-        return p;
+    public void makePayment(MakePaymentCommand cmd) {
+        UUID bookingId = cmd.getBookingId();
+
+        // 1) Load the booking
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found: " + bookingId));
+
+        // 2) Try to load an existing payment, else create one
+        Payment payment = paymentRepo
+                .findByBooking_BookingId(bookingId)
+                .orElseGet(() -> {
+                    Payment p = new Payment();
+                    p.setBooking(booking);
+                    return p;
+                });
+
+
+        if (payment.getStatus() == PaymentStatus.COMPLETED) {
+            return;
+        }
+
+
+        payment.setAmount(cmd.getAmount());
+        payment.setCurrency(cmd.getCurrency());
+        payment.setPaidAt(LocalDateTime.now());
+        payment.setStatus(PaymentStatus.COMPLETED);
+
+        payment = paymentRepo.save(payment);
+
+
+        booking.setStatus(BookingStatus.COMPLETED);
+        booking.getPayments().add(payment);      // if you have a OneToMany
+
+        bookingRepo.save(booking);
     }
+
+    @Transactional
+    public List<Payment> getallpayment() {
+        return paymentRepo.findAll();
+    }
+
 }
+

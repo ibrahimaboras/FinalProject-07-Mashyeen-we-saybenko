@@ -1,39 +1,40 @@
 package com.example.Booking.commads;
 
-import com.example.Booking.service.BookingService;
-import com.example.Booking.service.PaymentService;
+import com.example.Booking.Events.RabbitConfig;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookingCommandHandler {
-    private final BookingService bookingService;
-    private final PaymentService paymentService;
 
-    public BookingCommandHandler(BookingService bookingService,
-                                 PaymentService paymentService) {
-        this.bookingService = bookingService;
-        this.paymentService = paymentService;
-    }
+    @Autowired
+    private AutowireCapableBeanFactory beanFactory;
 
     @RabbitListener(
             bindings = @QueueBinding(
-                    value = @Queue(value = "booking.commands", durable = "true"),
-                    exchange = @Exchange(value = "booking.exchange", type = ExchangeTypes.DIRECT),
-                    key = "booking.commands"
-            )
+                    value    = @Queue(value = RabbitConfig.COMMAND_QUEUE, durable = "true"),
+                    exchange = @Exchange(value = RabbitConfig.EXCHANGE, type = ExchangeTypes.DIRECT),
+                    key      = RabbitConfig.ROUTING_COMMAND
+            ),
+            containerFactory = "rabbitListenerContainerFactory"  // ✅ Ensures no requeue on error
     )
     public void handle(Command cmd) {
-        if (cmd instanceof CreateBookingCommand c) {
-            bookingService.createBooking(c);
-        } else if (cmd instanceof MakePaymentCommand m) {
-            paymentService.makePayment(m);
-        } else if (cmd instanceof CancelBookingCommand x) {
-            bookingService.cancelBooking(x.getBookingId());
+        try {
+            beanFactory.autowireBeanProperties(
+                    cmd,
+                    AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE,
+                    false
+            );
+            cmd.execute();
+        } catch (Exception e) {
+            System.err.println("❌ Command execution failed: " + e.getMessage());
+            // Optional: log error or send to DLQ
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.Booking.service;
 
-import com.example.Booking.clients.FlightServiceClient;
-import com.example.Booking.clients.UserServiceClient;
+import com.example.Booking.commads.CancelBookingCommand;
+import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
@@ -22,45 +22,30 @@ import java.util.UUID;
 public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
-    private final UserServiceClient userServiceClient;
-    private final FlightServiceClient flightServiceClient;
+    private final CommandGateway commandGateway;
 
     public BookingService(BookingRepository bookingRepo,
-                          PaymentRepository paymentRepo,
-                          UserServiceClient userServiceClient,
-                          FlightServiceClient flightServiceClient) {
+                          PaymentRepository paymentRepo, CommandGateway commandGateway) {
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
-        this.userServiceClient = userServiceClient;
-        this.flightServiceClient = flightServiceClient;
+        this.commandGateway  = commandGateway;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-        // 1. Validate user exists
-        if (!userServiceClient.userExists(cmd.getUserId())) {
-            throw new IllegalArgumentException("User does not exist");
-        }
 
-        // 2. Validate all tickets
-        for (CreateBookingCommand.InitialTicket ticket : cmd.getTickets()) {
-            // Check seat availability for each flight
-            if (!flightServiceClient.isSeatAvailable(
-                    ticket.getFlightId(),  // Use flightId from each ticket
-                    1                     // Each ticket represents 1 seat
-            )) {
-                throw new IllegalStateException(
-                        "Seat not available for flight: " + ticket.getFlightId()
-                );
-            }
-        }
+        // 1) create & save
+        Booking b = BookingFactory.createBooking(cmd);
+        b.setStatus(BookingStatus.PENDING);
+        Booking saved = bookingRepo.save(b);
 
-        // 3. Create and save booking
-        Booking booking = BookingFactory.createBooking(cmd);
-        booking.setStatus(BookingStatus.PENDING);
-        return bookingRepo.save(booking);
+        // 2) publish to RabbitMQ
+        commandGateway.send("booking.exchange",
+                "booking.created",
+                cmd);
+
+        return saved;
     }
-
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
@@ -82,29 +67,18 @@ public class BookingService {
     public Booking cancelBooking(UUID bookingId) {
         Booking booking = getBooking(bookingId);
 
-        if (booking.getStatus() == BookingStatus.CANCELLED) {
-            throw new IllegalStateException("Booking already cancelled");
-        }
 
-        // Process refund
-        BigDecimal totalPaid = booking.getPayments().stream()
-                .filter(p -> p.getStatus() == PaymentStatus.COMPLETED)
-                .map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        b.setStatus(BookingStatus.CANCELLED);
+        // ... refund logic ...
+        Booking updated = bookingRepo.save(b);
 
-        BigDecimal refundAmount = totalPaid.multiply(BigDecimal.valueOf(0.2));
+        // publish cancellation
+        CancelBookingCommand cancelCmd = new CancelBookingCommand(bookingId);
+        commandGateway.send("booking.exchange",
+                "booking.cancelled",
+                cancelCmd);
 
-        Payment refund = new Payment(
-                UUID.randomUUID(),
-                booking,
-                refundAmount.negate(),
-                "USD",
-                PaymentStatus.REFUNDED,
-                LocalDateTime.now()
-        );
-
-        paymentRepo.save(refund);
-        booking.setStatus(BookingStatus.CANCELLED);
-        return bookingRepo.save(booking);
+        return updated;
     }
+
 }

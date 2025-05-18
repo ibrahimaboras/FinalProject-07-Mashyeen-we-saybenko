@@ -86,12 +86,18 @@
 			<artifactId>spring-cloud-stream-test-binder</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>Booking</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+					  <groupId>org.springframework.cloud</groupId>
+					  <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 				</dependency>
-	</dependencies>
-	
+    </dependencies>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
