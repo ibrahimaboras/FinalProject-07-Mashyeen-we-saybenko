@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8df93e5-61a7-45ed-afdf-f05d5683f878" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Flight/src/main/java/com/example/Flight/cofing/RedisConfig.java" afterDir="false" />
+    <list default="true" id="d8df93e5-61a7-45ed-afdf-f05d5683f878" name="Changes" comment="Configured Open Feign for booking">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_5_10_2025_11_52_AM__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/DockerFile" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/src/main/java/com/example/Flight/FlightApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/src/main/java/com/example/Flight/FlightApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/src/main/java/com/example/Flight/service/FlightService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/src/main/java/com/example/Flight/service/FlightService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flight/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Flight/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/BookingApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/BookingApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/clients/UserServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/clients/UserServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/service/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/src/main/java/com/example/Booking/service/BookingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +31,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Ziady_flightcheck" />
+        <entry key="$PROJECT_DIR$" value="Booking-Momen" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -43,7 +45,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ibrahimaboras/FinalProject-07-Mashyeen-we-saybenko.git&quot;,
-    &quot;accountId&quot;: &quot;ae9dd439-3f97-42e6-a28b-8d0c90876c42&quot;
+    &quot;accountId&quot;: &quot;17b18d88-1d6d-4c6b-aeb3-1da89eb1f3c5&quot;
   }
 }</component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -59,32 +61,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.BookingApplication.executor": "Debug",
-    "Spring Boot.FlightApplication (1).executor": "Run",
-    "Spring Boot.FlightApplication.executor": "Run",
-    "Spring Boot.NotificationApplication.executor": "Run",
-    "Spring Boot.UserApplication.executor": "Run",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BookingApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.FlightApplication (1).executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.FlightApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.NotificationApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UserApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Booking-OpenFeign&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Momen/Desktop/ACL Final Project/FinalProject-07-Mashyeen-we-saybenko&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -102,6 +105,19 @@
         <option value="QuarkusRunConfigurationType" />
         <option value="SpringBootApplicationConfigurationType" />
       </set>
+    </option>
+    <option name="hiddenConfigurations">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <set>
+              <option value="FlightApplication" />
+              <option value="NotificationApplication" />
+              <option value="UserApplication" />
+            </set>
+          </value>
+        </entry>
+      </map>
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.BookingApplication">
@@ -126,6 +142,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="UserApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="User" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.user.UserApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="UserApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="User" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.User.UserApplication" />
@@ -137,8 +160,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.24978.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-IU-243.24978.46" />
       </set>
     </attachedChunks>
   </component>
@@ -153,10 +176,25 @@
       <workItem from="1746032488580" duration="2405000" />
       <workItem from="1747333954630" duration="1731000" />
       <workItem from="1747336136120" duration="12130000" />
+      <workItem from="1747508823143" duration="9972000" />
+      <workItem from="1747600366582" duration="1959000" />
     </task>
+    <task id="LOCAL-00001" summary="Configured Open Feign for booking">
+      <option name="closed" value="true" />
+      <created>1747517953249</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1747517953249</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Configured Open Feign for booking" />
+    <option name="LAST_COMMIT_MESSAGE" value="Configured Open Feign for booking" />
   </component>
 </project>
