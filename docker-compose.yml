@@ -72,6 +72,17 @@ services:
       - spring
     restart: unless-stopped
 
+  redis_flight:
+    container_name: redis_flight
+    image: redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_flight_volume:/data
+    networks:
+      - spring
+    restart: unless-stopped 
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -161,8 +172,10 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_APPLICATION_NAME: user-service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_REDIS_HOST: redis_user
+      SPRING_REDIS_PORT: 6379
       SPRING_RABBITMQ_ADDRESSES: rabbitmq:5672
-      CLIENTS_BOOKING_URL: http://booking:8080
+      CLIENTS_BOOKING_URL: http://booking:8083
     networks:
       - spring
     depends_on:
@@ -181,10 +194,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_APPLICATION_NAME: flight-service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_REDIS_HOST: redis_flight
+      SPRING_REDIS_PORT: 6379
     networks:
       - spring
     depends_on:
       - postgres_flight
+      - redis_flight
       - eureka-server
 
   booking:
@@ -246,4 +262,5 @@ volumes:
   postgres_booking_volume:
   mongo_notification_volume:
   redis_user_volume:
+  redis_flight_volume:
   pgadmin:
