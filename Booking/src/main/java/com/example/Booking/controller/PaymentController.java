@@ -4,16 +4,23 @@ import com.example.Booking.Events.RabbitConfig;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.MakePaymentCommand;
 
+import com.example.Booking.model.Payment;
+import com.example.Booking.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
-    private final CommandGateway gateway;
 
-    public PaymentController(CommandGateway gateway) {
+    private final CommandGateway gateway;
+    private final PaymentService paymentService;
+
+    public PaymentController(CommandGateway gateway , PaymentService paymentService) {
         this.gateway = gateway;
+        this.paymentService = paymentService;
     }
 
     @PostMapping
@@ -24,5 +31,11 @@ public class PaymentController {
                 cmd
         );
         return ResponseEntity.accepted().build();
+    }
+    @GetMapping
+    public List<Payment> list(
+    ) {
+
+        return paymentService.getallpayment();
     }
 }

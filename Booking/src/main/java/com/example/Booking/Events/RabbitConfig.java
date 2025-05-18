@@ -96,11 +96,17 @@ public class RabbitConfig {
     }
 
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setMessageConverter(new Jackson2JsonMessageConverter());
-        factory.setDefaultRequeueRejected(false);  // ✅ KEY LINE
-        return factory;
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory cf,
+            Jackson2JsonMessageConverter converter
+    ) {
+        SimpleRabbitListenerContainerFactory f = new SimpleRabbitListenerContainerFactory();
+        f.setConnectionFactory(cf);
+        f.setMessageConverter(converter);
+        // force single‐threaded consumers
+        f.setConcurrentConsumers(1);
+        f.setMaxConcurrentConsumers(1);
+        f.setDefaultRequeueRejected(false);
+        return f;
     }
 }

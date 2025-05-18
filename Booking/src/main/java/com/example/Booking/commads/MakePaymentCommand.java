@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,9 +20,9 @@ import java.util.UUID;
 public class MakePaymentCommand implements Command, Serializable {
     @Serial private static final long serialVersionUID = 1L;
 
-    private final UUID    bookingId;
+    private final UUID bookingId;
     private final BigDecimal amount;
-    private final String   currency;
+    private final String currency;
 
     @JsonIgnore
     private transient PaymentService paymentService;
@@ -32,16 +34,26 @@ public class MakePaymentCommand implements Command, Serializable {
     @Override
     public void execute() {
         try {
+            if (paymentService == null) throw new IllegalStateException("paymentService is null");
+            if (rabbit == null) throw new IllegalStateException("rabbit is null");
+
             paymentService.makePayment(this);
-            rabbit.convertAndSend(
-                    RabbitConfig.EXCHANGE,
-                    RabbitConfig.ROUTING_PAYMENT,
-                    this.bookingId
-            );
-            System.out.println("→ Event: " + RabbitConfig.ROUTING_PAYMENT + " → " + this.bookingId);
+
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    rabbit.convertAndSend(
+                            RabbitConfig.EXCHANGE,
+                            RabbitConfig.ROUTING_PAYMENT,
+                            bookingId
+                    );
+                    System.out.println("→ Event: " + RabbitConfig.ROUTING_PAYMENT + " → " + bookingId);
+                }
+            });
+
         } catch (Exception e) {
             System.err.println("❌ Payment failed for booking " + bookingId + ": " + e.getMessage());
-            // optional: send to dead-letter exchange, or persist to a failed message table
         }
     }
+
 }

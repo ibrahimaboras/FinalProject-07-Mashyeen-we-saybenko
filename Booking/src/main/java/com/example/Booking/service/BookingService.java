@@ -76,9 +76,9 @@ public class BookingService {
 
         // publish cancellation
         CancelBookingCommand cancelCmd = new CancelBookingCommand(bookingId);
-        commandGateway.send("booking.exchange",
-                "booking.cancelled",
-                cancelCmd);
+//        commandGateway.send("booking.exchange",
+//                "booking.cancelled",
+//                cancelCmd);
 
         return updated;
     }
