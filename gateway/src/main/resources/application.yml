@@ -12,25 +12,25 @@ spring:
         - id: user-service
           uri: lb://user-service  # Load balancer prefix
           predicates:
-            - Path=/api/user/**
+            - Path=/api/users/**
           filters:
             - StripPrefix=2  # Remove the first two segments of the path
         - id: booking-service
           uri: lb://booking-service  # Load balancer prefix
           predicates:
-            - Path=/api/booking/**
+            - Path=/api/bookings/**
           filters:
             - StripPrefix=2  # Remove the first two segments of the path
         - id: flight-service
           uri: lb://flight-service  # Load balancer prefix
           predicates:
-            - Path=/api/flight/**
+            - Path=/api/flights/**
           filters:
             - StripPrefix=2  # Remove the first two segments of the path
         - id: notification-service
           uri: lb://notification-service  # Load balancer prefix
           predicates:
-            - Path=/api/notification/**
+            - Path=/api/notifications/**
           filters:
             - StripPrefix=2  # Remove the first two segments of the path
         
