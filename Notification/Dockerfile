@@ -1,6 +1,10 @@
-# Use OpenJDK 25 as the base image
 FROM openjdk:25-ea-4-jdk-oraclelinux9
+
+# Set working directory inside container
 WORKDIR /app
-COPY target/Notification-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8083
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Copy the compiled jar to the container
+COPY target/*.jar /app/app.jar
+
+# Run the jar
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

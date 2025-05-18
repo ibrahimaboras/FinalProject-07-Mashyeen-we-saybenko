@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes: # Define routes for the API Gateway
+        - id: user-service
+          uri: lb://user-service  # Load balancer prefix
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=2  # Remove the first two segments of the path
+        - id: booking-service
+          uri: lb://booking-service  # Load balancer prefix
+          predicates:
+            - Path=/api/bookings/**
+          filters:
+            - StripPrefix=2  # Remove the first two segments of the path
+        - id: flight-service
+          uri: lb://flight-service  # Load balancer prefix
+          predicates:
+            - Path=/api/flights/**
+          filters:
+            - StripPrefix=2  # Remove the first two segments of the path
+        - id: notification-service
+          uri: lb://notification-service  # Load balancer prefix
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - StripPrefix=2  # Remove the first two segments of the path
+        
+
+      discovery:
+        locator:
+          enabled: true  # This makes gateway use service names automatically
+          lower-case-service-id: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+

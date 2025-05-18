@@ -1,20 +1,48 @@
+#server:
+#  port: 8080
+#
+#spring:
+#  profiles:
+#    active: docker
+#
+#  data:
+#    redis:
+#      host: redis  # Use the Redis service name defined in Docker Compose
+#      port: 6379
+#      timeout: 2000ms
+#
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/userdb  # Point to the DB service in Docker Compose
+#    username: postgres
+#    password: 1234
+#    driver-class-name: org.postgresql.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#
+#  cache:
+#    type: redis
+#
+#  booking:
+#    service:
+#      url: http://booking:8081  # Assuming the service exists
+
+
+# THIS PART HAS TO BE ADDED FOR THE GATEWAY
+# DELETE THIS AFTER EDITING THE CODE ABOVE AND IMPLENTING THE BELOW CODE
 spring:
   application:
-    name: User
-  datasource:
-    url: jdbc:postgresql://db:5432/userdb
-    username: postgres
-    password: 1234
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    name: user-service
+  server:
+    port: 8081
 
-server:
-  port: 8080
 
-booking:
-  service:
-    url: http://localhost:8081  # replace with actual booking service base URL
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+  instance:
+    prefer-ip-address: true

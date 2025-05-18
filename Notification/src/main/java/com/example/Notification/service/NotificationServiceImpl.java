@@ -12,9 +12,11 @@ import com.example.Notification.template.SmsTemplateProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -125,6 +127,10 @@ public class NotificationServiceImpl implements NotificationService {
             throw new IllegalArgumentException("Notification not found");
         }
         notificationRepository.deleteById(id);
+    }
+    @Override
+    public Optional<Notification> getNotificationById(String id){
+        return notificationRepository.findById(id);
     }
 
 }

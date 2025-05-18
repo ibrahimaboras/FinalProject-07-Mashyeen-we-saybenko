@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8084 # UNCHANGED FOR GATEWAY SINCE IT IS NOT THE DEFAULT PORT 8080
 
 spring:
   application:
@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://root:example@mongo_db:27017/notification_service?authSource=admin
+      uri: mongodb://root:example@mongo_notification:27017/notification_service?authSource=admin
 
   rabbitmq:
     host: rabbitmq
@@ -19,6 +19,13 @@ logging:
   level:
     root: INFO
     com.example.notification: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+  instance:
+    prefer-ip-address: true
 
 #server:
 #  port: 8083

@@ -5,14 +5,17 @@ import com.example.Notification.model.Notification;
 import com.example.Notification.model.NotificationType;
 import com.example.Notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -58,6 +61,12 @@ public class NotificationController {
         return notificationService.getAllNotifications();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Notification> getNotificationById(@PathVariable String id) {
+        if(!notificationService.getNotificationById(id).isPresent())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(notificationService.getNotificationById(id).get());
+    }
     // 7. Get notifications by user ID
     @GetMapping("/user/{userId}")
     public List<Notification> getByUserId(@PathVariable Long userId) {

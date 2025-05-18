@@ -1,6 +1,4 @@
-package com.example.Booking.service;// com/example/booking/service/BookingService.java
-
-
+package com.example.Booking.service;
 
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
@@ -35,6 +33,7 @@ public class BookingService {
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
+
         // 1) create & save
         Booking b = BookingFactory.createBooking(cmd);
         b.setStatus(BookingStatus.PENDING);
@@ -49,7 +48,7 @@ public class BookingService {
     }
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
     }
 
     public List<Booking> getAllBookings() {
@@ -66,9 +65,8 @@ public class BookingService {
 
     @Transactional
     public Booking cancelBooking(UUID bookingId) {
-        Booking b = getBooking(bookingId);
-        if (b.getStatus() == BookingStatus.CANCELLED)
-            throw new RuntimeException("Already cancelled");
+        Booking booking = getBooking(bookingId);
+
 
         b.setStatus(BookingStatus.CANCELLED);
         // ... refund logic ...
