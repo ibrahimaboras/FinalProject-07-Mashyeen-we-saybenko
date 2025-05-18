@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flight-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flight-service
+  template:
+    metadata:
+      labels:
+        app: flight-service
+    spec:
+      containers:
+        - name: flight-service
+          image: mohamedelassyouty/microserviceswithk8s-flight #pull your own pushed image
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-flight-secret
+                  key: SPRING_DATASOURCE_URL
+            - name: SERVER_PORT
+              value: "8081"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-flight-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-flight-secret
+                  key: POSTGRES_PASSWORD
+            - name: clients.booking.url
+              value: http://booking-service:8082
