@@ -1,5 +1,7 @@
 package com.example.Booking.service;
 
+import com.example.Booking.Events.BookingNotificationProducer;
+import com.example.Booking.Events.FlightTicketDto;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
@@ -17,15 +19,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
+    private final BookingNotificationProducer producer;
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
     private final CommandGateway commandGateway;
 
-    public BookingService(BookingRepository bookingRepo,
+    public BookingService(BookingNotificationProducer producer, BookingRepository bookingRepo,
                           PaymentRepository paymentRepo, CommandGateway commandGateway) {
+        this.producer = producer;
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
         this.commandGateway  = commandGateway;
@@ -37,14 +42,18 @@ public class BookingService {
         // 1) create & save
         Booking b = BookingFactory.createBooking(cmd);
         b.setStatus(BookingStatus.PENDING);
-        Booking saved = bookingRepo.save(b);
+        return bookingRepo.save(b);
 
-        // 2) publish to RabbitMQ
-        commandGateway.send("booking.exchange",
-                "booking.created",
-                cmd);
 
-        return saved;
+
+//        // 2) publish to RabbitMQ
+//        commandGateway.send("booking.exchange",
+//                "booking.created",
+//                cmd);
+//
+
+
+
     }
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
