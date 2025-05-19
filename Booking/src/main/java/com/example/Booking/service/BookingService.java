@@ -47,7 +47,6 @@ public class BookingService {
         b.setStatus(BookingStatus.PENDING);
         return bookingRepo.save(b);
 
-
     }
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
