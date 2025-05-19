@@ -3,22 +3,23 @@ package com.example.Notification.listener;
 
 import lombok.Data;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class BookingCreatedEvent {
     private String userId;
-    private  String bookingId;
+    private UUID bookingId;
     private List<FlightTicketDto> tickets;
 
     public String getUserId() {
         return userId;
     }
 
-    public String getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(String bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

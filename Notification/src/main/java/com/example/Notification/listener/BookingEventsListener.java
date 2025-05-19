@@ -32,7 +32,7 @@ public class BookingEventsListener {
 
         Notification notification = new Notification();
         notification.setUserId(Long.parseLong(event.getUserId())); // Convert from String
-        notification.setBookingId(Long.parseLong(event.getBookingId()));
+        notification.setBookingId(event.getBookingId());
         notification.setType(NotificationType.EMAIL); // or SMS, as you prefer
         notification.setMessage(message);
         notification.setTimestamp(LocalDateTime.now());
@@ -51,7 +51,7 @@ public class BookingEventsListener {
 
         Notification notification = new Notification();
         notification.setUserId(Long.parseLong(event.getUserId()));
-        notification.setBookingId(Long.parseLong(event.getBookingId()));
+        notification.setBookingId(event.getBookingId());
         notification.setType(NotificationType.EMAIL);
         notification.setMessage(message);
         notification.setTimestamp(LocalDateTime.now());
@@ -72,7 +72,7 @@ public class BookingEventsListener {
 
         Notification notification = new Notification();
         notification.setUserId(null); // No userId provided in event
-        notification.setBookingId(Long.parseLong(e.getBookingId()));
+        notification.setBookingId(e.getBookingId());
         notification.setType(NotificationType.EMAIL);
         notification.setMessage(message);
         notification.setTimestamp(LocalDateTime.now());

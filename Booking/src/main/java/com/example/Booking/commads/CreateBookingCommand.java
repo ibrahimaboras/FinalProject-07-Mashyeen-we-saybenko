@@ -57,7 +57,7 @@ public class CreateBookingCommand implements Command, Serializable {
         BookingCreatedEvent event =
                 new BookingCreatedEvent(
                         userId.toString(),
-                        saved.getBookingId().toString(),
+                        saved.getBookingId(),
                         dtoTickets
                 );
 
