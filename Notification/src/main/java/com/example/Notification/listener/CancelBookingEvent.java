@@ -2,16 +2,18 @@ package com.example.Notification.listener;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class CancelBookingEvent {
-    private String bookingId;
+    private UUID bookingId;
     private String userId;
 
-    public String getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(String bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

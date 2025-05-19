@@ -4,20 +4,21 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class PaymentMadeEvent {
-    private String bookingId;
+    private UUID bookingId;
     private String paymentId;
     private BigDecimal amount;
     private String currency;
     private LocalDateTime paidAt;
 
-    public String getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(String bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

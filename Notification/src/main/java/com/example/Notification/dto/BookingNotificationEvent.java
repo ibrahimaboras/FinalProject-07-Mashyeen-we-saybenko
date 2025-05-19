@@ -3,11 +3,12 @@ package com.example.Notification.dto;
 import com.example.Notification.model.NotificationType;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class BookingNotificationEvent {
 
     private Long userId;
-    private Long bookingId;
+    private UUID bookingId;
     private NotificationType type;
     private Map<String, String> data;
 
@@ -15,7 +16,7 @@ public class BookingNotificationEvent {
         // No-arg constructor
     }
 
-    public BookingNotificationEvent(Long userId, Long bookingId, NotificationType type, Map<String, String> data) {
+    public BookingNotificationEvent(Long userId, UUID bookingId, NotificationType type, Map<String, String> data) {
         this.userId = userId;
         this.bookingId = bookingId;
         this.type = type;
@@ -31,11 +32,11 @@ public class BookingNotificationEvent {
         this.userId = userId;
     }
 
-    public Long getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Long bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Document(collection = "notifications")
 public class Notification {
@@ -12,14 +13,14 @@ public class Notification {
     private String id;
 
     private Long userId;
-    private Long bookingId;
+    private UUID bookingId;
     private NotificationType type;
     private String message;
     private LocalDateTime timestamp;
 
     public Notification() {}
 
-    public Notification(String id, Long userId, Long bookingId, NotificationType type, String message, LocalDateTime timestamp) {
+    public Notification(String id, Long userId, UUID bookingId, NotificationType type, String message, LocalDateTime timestamp) {
         this.id = id;
         this.userId = userId;
         this.bookingId = bookingId;
@@ -37,7 +38,7 @@ public class Notification {
         return userId;
     }
 
-    public Long getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
@@ -62,7 +63,7 @@ public class Notification {
         this.userId = userId;
     }
 
-    public void setBookingId(Long bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

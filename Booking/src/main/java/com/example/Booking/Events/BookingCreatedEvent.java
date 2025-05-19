@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.example.Booking.dto.FlightTicketDto;
 
@@ -13,5 +14,6 @@ import com.example.Booking.dto.FlightTicketDto;
 @AllArgsConstructor
 public class BookingCreatedEvent {
     private String userId;
+    private UUID bookingId;
     private List<FlightTicketDto> tickets;
 }

@@ -17,9 +17,9 @@ public class BookingNotificationProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendBookingCreated(UUID userId, List<FlightTicketDto> tickets) {
+    public void sendBookingCreated(UUID userId, UUID bookingId, List<FlightTicketDto> tickets) {
         BookingCreatedEvent event =
-                new BookingCreatedEvent(userId.toString(), tickets);
+                new BookingCreatedEvent(userId.toString(), bookingId , tickets);
 
         rabbitTemplate.convertAndSend(
                 RabbitConfig.EXCHANGE,

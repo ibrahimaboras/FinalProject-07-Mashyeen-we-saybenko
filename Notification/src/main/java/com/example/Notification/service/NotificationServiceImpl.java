@@ -71,6 +71,40 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void sendAndStoreNotification(Notification notification) {
+        // Try to get a template based on type
+        NotificationTemplate template = templateRepository.findByType(notification.getType());
+        String finalMessage;
+
+        if (template != null) {
+            Map<String, String> dynamicData = Map.of(
+                    "bookingId", String.valueOf(notification.getBookingId()),
+                    "userId", String.valueOf(notification.getUserId())
+            );
+
+            finalMessage = notification.getType() == NotificationType.EMAIL
+                    ? emailTemplateProcessor.generateMessage(template, dynamicData)
+                    : smsTemplateProcessor.generateMessage(template, dynamicData);
+        } else {
+            // fallback to raw message if no template
+            finalMessage = notification.getMessage();
+        }
+
+        notification.setMessage(finalMessage);
+        notification.setTimestamp(LocalDateTime.now());
+
+        notificationRepository.save(notification);
+
+        NotificationSender sender = senderMap.get(notification.getType().name());
+        if (sender != null) {
+            sender.send(String.valueOf(notification.getUserId()), finalMessage);
+        } else {
+            throw new IllegalStateException("No sender found for type: " + notification.getType());
+        }
+    }
+
+
+    @Override
     public List<Notification> getAllNotifications() {
         return notificationRepository.findAll();
     }
