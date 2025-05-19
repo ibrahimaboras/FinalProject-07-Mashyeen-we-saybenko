@@ -31,8 +31,9 @@ public class FlightTicket {
     @JoinColumn(name = "booking_id")
     @JsonBackReference
     private Booking booking;
-    private UUID flightId;
-    private UUID seatId;
+    private Long flightId;
+    private Long seatId;
+    private Long priceId;
 
     public FlightTicket() { }
 
@@ -43,8 +44,9 @@ public class FlightTicket {
                         LocalDate dateOfBirth,
                         SeatClass seatClass,
                         Booking booking,
-                        UUID flightId,
-                        UUID seatId) {
+                        Long flightId,
+                        Long seatId,
+                        Long priceId) {
         this.fullName = fullName;
         this.nationality = nationality;
         this.passportNumber = passportNumber;
@@ -54,5 +56,6 @@ public class FlightTicket {
         this.booking = booking;
         this.flightId = flightId;
         this.seatId = seatId;
+        this.priceId = priceId;
     }
 }

@@ -1,10 +1,11 @@
 package com.example.Booking.controller;
 
 import com.example.Booking.Events.RabbitConfig;
+import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
-
+import com.example.Booking.dto.PriceDTO;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.service.BookingService;
@@ -19,11 +20,13 @@ import java.util.UUID;
 public class BookingController {
     private final CommandGateway gateway;
     private final BookingService service;
+    private final UserServiceClient userServiceClient;
 
     public BookingController(CommandGateway gateway,
-                             BookingService service) {
+                             BookingService service, UserServiceClient userServiceClient) {
         this.gateway = gateway;
         this.service = service;
+        this.userServiceClient = userServiceClient;
     }
 
     @PostMapping
@@ -36,14 +39,14 @@ public class BookingController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/{id}")
-    public Booking get(@PathVariable UUID id) {
-        return service.getBooking(id);
-    }
+    // @GetMapping("/{id}")
+    // public Booking get(@PathVariable UUID id) {
+    //     return service.getBooking(id);
+    // }
 
     @GetMapping
     public List<Booking> list(
-            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) Long userId,
             @RequestParam(required = false) BookingStatus status
     ) {
         if (userId != null)   return service.getBookingsByUser(userId);
@@ -60,5 +63,16 @@ public class BookingController {
                 cancelCmd
         );
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable Long userId) {
+        List<Booking> bookings = service.getBookingsByUser(userId);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/{priceID}/getFlightInfo")
+    public ResponseEntity<PriceDTO> getFlightInfo(@PathVariable Long priceID) {
+        return ResponseEntity.ok(service.getFlightInfoByPriceId(priceID));
     }
 }

@@ -1,22 +1,24 @@
 package com.example.Booking.service;
 
+import com.example.Booking.clients.FlightServiceClient;
+import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.Events.BookingNotificationProducer;
 import com.example.Booking.Events.FlightTicketDto;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
+import com.example.Booking.dto.PriceDTO;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
-import com.example.Booking.model.Payment;
-import com.example.Booking.model.PaymentStatus;
 import com.example.Booking.repository.BookingRepository;
 import com.example.Booking.repository.PaymentRepository;
+import com.netflix.discovery.converters.Auto;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,24 +32,29 @@ public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
     private final CommandGateway commandGateway;
+    private final UserServiceClient userServiceClient; // Added Feign client
+
+    @Autowired
+    private FlightServiceClient flightServiceClient;
 
     public BookingService(BookingNotificationProducer producer, BookingRepository bookingRepo,
                           PaymentRepository paymentRepo, CommandGateway commandGateway) {
         this.producer = producer;
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
-        this.commandGateway  = commandGateway;
+        this.commandGateway = commandGateway;
+        this.userServiceClient = userServiceClient;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-
         // 1) create & save
         Booking b = BookingFactory.createBooking(cmd);
         b.setStatus(BookingStatus.PENDING);
         return bookingRepo.save(b);
 
     }
+
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
@@ -57,7 +64,7 @@ public class BookingService {
         return bookingRepo.findAll();
     }
 
-    public List<Booking> getBookingsByUser(UUID userId) {
+    public List<Booking> getBookingsByUser(Long userId) {
         return bookingRepo.findByUserId(userId);
     }
 
@@ -90,4 +97,23 @@ public class BookingService {
         return bookingRepo.save(b);
     }
 
+    // New private helper method to handle user notifications
+    private void notifyUserService(UUID bookingId, Long userId, String action) {
+        try {
+            String notification = String.format(
+                    "Booking %s - ID: %s, User: %s",
+                    action,
+                    bookingId,
+                    userId
+            );
+            userServiceClient.sendBookingNotification(userId, notification);
+        } catch (Exception e) {
+            // Log error but don't interrupt main flow
+            System.err.println("Failed to notify user service: " + e.getMessage());
+        }
+    }
+
+    public PriceDTO getFlightInfoByPriceId(Long priceId) {
+        return flightServiceClient.getFlightInfo(priceId);
+    }
 }

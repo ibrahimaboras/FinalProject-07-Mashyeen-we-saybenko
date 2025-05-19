@@ -1,6 +1,7 @@
 package com.example.user.controller;
 
 import com.example.user.command.*;
+import com.example.user.dto.BookingDTO;
 import com.example.user.dto.ChangePasswordDTO;
 import com.example.user.dto.LoginDTO;
 import com.example.user.dto.RegisterDTO;
@@ -84,5 +85,21 @@ public class UserController {
     @GetMapping("/by-email")
     public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+    @PostMapping("/{userId}/booking-notifications")
+    public ResponseEntity<?> handleBookingNotification(
+            @PathVariable Long userId,
+            @RequestBody String bookingNotification) {
+
+        // Delegate processing to service layer
+        userService.processBookingNotification(userId, bookingNotification);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{userId}/bookings")
+    public ResponseEntity<List<BookingDTO>> getBookingsByUserId(@PathVariable Long userId) {
+        List<BookingDTO> bookings = userService.viewBookings(userId);
+        return ResponseEntity.ok(bookings);
     }
 }

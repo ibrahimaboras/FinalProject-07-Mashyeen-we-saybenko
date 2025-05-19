@@ -22,7 +22,7 @@ public class Booking {
     private UUID bookingId;
 
     @Column(nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -46,7 +46,7 @@ public class Booking {
     }
 
     public Booking(UUID bookingId,
-                   UUID userId,
+                   Long userId,
                    List<FlightTicket> tickets,
                    List<Payment> payments,
                    BookingStatus status,
