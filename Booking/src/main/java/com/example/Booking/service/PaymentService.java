@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.Booking.model.BookingStatus.CONFIRMED;
-
 @Service
 public class PaymentService {
     private final BookingRepository bookingRepo;
@@ -28,7 +26,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public void makePayment(MakePaymentCommand cmd) {
+    public Payment makePayment(MakePaymentCommand cmd) {
         UUID bookingId = cmd.getBookingId();
 
         // 1) Load the booking
@@ -46,7 +44,7 @@ public class PaymentService {
 
 
         if (payment.getStatus() == PaymentStatus.COMPLETED) {
-            return;
+            return payment;
         }
 
 
@@ -62,6 +60,8 @@ public class PaymentService {
         booking.getPayments().add(payment);      // if you have a OneToMany
 
         bookingRepo.save(booking);
+
+        return payment;
     }
 
     @Transactional

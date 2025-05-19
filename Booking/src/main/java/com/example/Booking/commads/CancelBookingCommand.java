@@ -1,6 +1,8 @@
 package com.example.Booking.commads;
 
+import com.example.Booking.Events.CancelBookingEvent;
 import com.example.Booking.Events.RabbitConfig;
+import com.example.Booking.model.Booking;
 import com.example.Booking.service.BookingService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -14,7 +16,8 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor
 public class CancelBookingCommand implements Command, Serializable {
-    @Serial private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private UUID bookingId;
 
@@ -30,18 +33,21 @@ public class CancelBookingCommand implements Command, Serializable {
 
     @Override
     public void execute() {
-        if (bookingService == null || rabbit == null) {
-            throw new IllegalStateException("Dependencies not injected");
-        }
+        // 1) perform cancellation
+        Booking cancelled = bookingService.cancelBooking(bookingId);
 
-        bookingService.cancelBooking(bookingId);
+        // 2) build event payload
+        CancelBookingEvent event = new CancelBookingEvent(
+                bookingId.toString(),
+                cancelled.getUserId().toString()
+        );
+
+        // 3) publish
         rabbit.convertAndSend(
                 RabbitConfig.EXCHANGE,
                 RabbitConfig.ROUTING_CANCELLED,
-                bookingId
+                event
         );
-
-        System.out.println("✅ Booking cancelled, event sent → " + bookingId);
+        System.out.println("→ Sent booking.cancelled → " + event);
     }
 }
-

@@ -1,6 +1,8 @@
 package com.example.Booking.commads;
 
+import com.example.Booking.Events.PaymentMadeEvent;
 import com.example.Booking.Events.RabbitConfig;
+import com.example.Booking.model.Payment;
 import com.example.Booking.service.PaymentService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -18,7 +20,8 @@ import java.util.UUID;
 
 @Getter @Setter @RequiredArgsConstructor
 public class MakePaymentCommand implements Command, Serializable {
-    @Serial private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final UUID bookingId;
     private final BigDecimal amount;
@@ -33,27 +36,26 @@ public class MakePaymentCommand implements Command, Serializable {
 
     @Override
     public void execute() {
-        try {
-            if (paymentService == null) throw new IllegalStateException("paymentService is null");
-            if (rabbit == null) throw new IllegalStateException("rabbit is null");
+        // 1) make payment
+        Payment payment = paymentService.makePayment(this);
 
-            paymentService.makePayment(this);
+        // 2) build event payload
+        PaymentMadeEvent event = new PaymentMadeEvent(
+                bookingId.toString(),
+                payment.getPaymentId().toString(),
+                amount,
+                currency,
+                payment.getPaidAt()
+        );
 
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    rabbit.convertAndSend(
-                            RabbitConfig.EXCHANGE,
-                            RabbitConfig.ROUTING_PAYMENT,
-                            bookingId
-                    );
-                    System.out.println("→ Event: " + RabbitConfig.ROUTING_PAYMENT + " → " + bookingId);
-                }
-            });
-
-        } catch (Exception e) {
-            System.err.println("❌ Payment failed for booking " + bookingId + ": " + e.getMessage());
-        }
+        // 3) publish *after commit*
+        rabbit.convertAndSend(
+                RabbitConfig.EXCHANGE,
+                RabbitConfig.ROUTING_PAYMENT,
+                event
+        );
+        System.out.println("→ Sent booking.payment_made → " + event);
     }
-
 }
+
+
