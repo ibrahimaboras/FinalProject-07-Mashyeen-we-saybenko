@@ -34,9 +34,15 @@ spec:
             - name: ROUTES_FLIGHT
               value: "http://flight-service:8081"
             - name: ROUTES_BOOKING
+<<<<<<< Updated upstream
               value: "http://warehouse-service:8082"
             - name: ROUTES_NOTIFICATION
               value: "http://erp-service:8084"
+=======
+              value: "http://booking-service:8082"
+            - name: ROUTES_NOTIFICATION
+              value: "http://notification-service:8084"
+>>>>>>> Stashed changes
             - name: SPRING_MAIN_WEB_APPLICATION_TYPE
               value: reactive
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID

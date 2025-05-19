@@ -60,7 +60,13 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-secret
                   key: RABBITMQ_DEFAULT_PASS
+<<<<<<< Updated upstream
             - name: clients.user.url
               value: http://user-service:8080
             - name: clients.flight.url
+=======
+            - name: CLIENTS_USER_URL
+              value: http://user-service:8080
+            - name: CLIENTS_FLIGHT_URL
+>>>>>>> Stashed changes
               value: http://flight-service:8081

@@ -50,5 +50,9 @@ spec:
               value: "redis-service"
             - name: SPRING_DATA_REDIS_PORT
               value: "6379"
+<<<<<<< Updated upstream
             - name: clients.booking.url
+=======
+            - name: CLIENTS_BOOKING_URL
+>>>>>>> Stashed changes
               value: http://booking-service:8082
