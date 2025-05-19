@@ -1,9 +1,11 @@
 package com.example.Booking.service;
 
+import com.example.Booking.clients.FlightServiceClient;
 import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
+import com.example.Booking.dto.FlightDTO;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
@@ -20,35 +22,65 @@ public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
     private final CommandGateway commandGateway;
-    private final UserServiceClient userServiceClient; // Added Feign client
+    private final UserServiceClient userServiceClient;
+    private final FlightServiceClient flightServiceClient; // Added Feign client
 
     public BookingService(BookingRepository bookingRepo,
                           PaymentRepository paymentRepo,
                           CommandGateway commandGateway,
-                          UserServiceClient userServiceClient) { // Added parameter
+                          UserServiceClient userServiceClient,
+                          FlightServiceClient flightServiceClient) { // Added parameter
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
         this.commandGateway = commandGateway;
         this.userServiceClient = userServiceClient;
+        this.flightServiceClient = flightServiceClient;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-        // 1) create & save
-        Booking b = BookingFactory.createBooking(cmd);
-        b.setStatus(BookingStatus.PENDING);
-        Booking saved = bookingRepo.save(b);
+        try {
+            if (cmd.getTickets() == null || cmd.getTickets().isEmpty()) {
+                throw new IllegalArgumentException("Booking must include at least one ticket.");
+            }
 
-        // 2) publish to RabbitMQ
-        commandGateway.send("booking.exchange",
-                "booking.created",
-                cmd);
+            // For simplicity, we take the first ticket to get flight info
+            var firstTicket = cmd.getTickets().get(0);
+            UUID flightId = firstTicket.getFlightId();
+            UUID seatId = firstTicket.getSeatId();
 
-        // 3) Notify user service (added)
-        notifyUserService(saved.getBookingId(), saved.getUserId(), "created");
+            FlightDTO flight = flightServiceClient.getFlightById(flightId);
 
-        return saved;
+            if (!"ACTIVE".equalsIgnoreCase(flight.getStatus())) {
+                throw new IllegalStateException("Flight is not active.");
+            }
+
+            if (flight.getAvailableSeats() <= 0) {
+                throw new IllegalStateException("No seats available.");
+            }
+
+            // 2. Reserve seat
+            flightServiceClient.reserveSeat(flightId, seatId);
+
+            // 3. Create & save booking
+            Booking booking = BookingFactory.createBooking(cmd);
+            booking.setStatus(BookingStatus.PENDING);
+            Booking saved = bookingRepo.save(booking);
+
+            // 4. Publish event
+            commandGateway.send("booking.exchange", "booking.created", cmd);
+
+            // 5. Notify user
+            notifyUserService(saved.getBookingId(), saved.getUserId(), "created");
+
+            return saved;
+
+        } catch (Exception e) {
+            System.err.println("Failed to create booking: " + e.getMessage());
+            throw new RuntimeException("Booking creation failed.", e);
+        }
     }
+
 
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
