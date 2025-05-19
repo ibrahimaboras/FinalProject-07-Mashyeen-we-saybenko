@@ -3,6 +3,8 @@ package com.example.Booking.Events;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import com.example.Booking.dto.FlightTicketDto;
+
 import java.util.List;
 import java.util.UUID;
 

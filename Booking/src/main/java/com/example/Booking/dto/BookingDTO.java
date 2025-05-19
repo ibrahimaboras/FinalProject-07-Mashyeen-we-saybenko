@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BookingDTO {
     private UUID bookingId;
     private Long userId;
-    private List<FlightTicketDTO> flightTickets;
+    private List<FlightTicketDto> tickets;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -54,12 +56,14 @@ public class BookingDTO {
         this.updatedAt = updatedAt;
     }
 
-    public List<FlightTicketDTO> getFlightTickets() {
-        return flightTickets;
+    // @JsonProperty("tickets")
+    public List<FlightTicketDto> getFlightTickets() {
+        return tickets;
     }
 
-    public void setFlightTickets(List<FlightTicketDTO> flightTickets) {
-        this.flightTickets = flightTickets;
+    // @JsonProperty("tickets")
+    public void setFlightTickets(List<FlightTicketDto> tickets) {
+        this.tickets = tickets;
     }
 }
 

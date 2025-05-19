@@ -1,8 +1,8 @@
 package com.example.Booking.commads;
 
 import com.example.Booking.Events.BookingCreatedEvent;
-import com.example.Booking.Events.FlightTicketDto;
 import com.example.Booking.Events.RabbitConfig;
+import com.example.Booking.dto.FlightTicketDto;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.SeatClass;
 import com.example.Booking.service.BookingService;
