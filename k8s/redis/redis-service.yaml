@@ -4,8 +4,11 @@ metadata:
   name: redis-service
   namespace: acl-app
 spec:
+  type: ClusterIP
   selector:
     app: redis
   ports:
     - port: 6379
       targetPort: 6379
+      protocol: TCP
+      name: redis

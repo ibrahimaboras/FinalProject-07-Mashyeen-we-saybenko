@@ -19,8 +19,14 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://eureka-server:8761/eureka/"
+            - name: EUREKA_CLIENT_REGISTER_WITH_EUREKA
+              value: "true"
+            - name: EUREKA_CLIENT_FETCH_REGISTRY
+              value: "true"
             - name: SPRING_PROFILES_ACTIVE
-              value: k8s
+              value: "k8s"
             - name: SERVER_PORT
               value: "8080"
             - name: SPRING_DATASOURCE_URL
@@ -39,7 +45,7 @@ spec:
                   name: postgres-user-secret
                   key: POSTGRES_PASSWORD
             - name: SPRING_DATA_REDIS_HOST
-              value: redis-service
+              value: "redis-service"
             - name: SPRING_DATA_REDIS_PORT
               value: "6379"
             - name: clients.booking.url
