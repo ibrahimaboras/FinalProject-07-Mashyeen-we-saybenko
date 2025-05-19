@@ -13,5 +13,6 @@ import com.example.Booking.dto.FlightTicketDto;
 @AllArgsConstructor
 public class BookingCreatedEvent {
     private String userId;
+    private  String bookingId;
     private List<FlightTicketDto> tickets;
 }

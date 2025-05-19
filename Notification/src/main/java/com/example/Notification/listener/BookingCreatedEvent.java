@@ -7,10 +7,19 @@ import java.util.List;
 @Data
 public class BookingCreatedEvent {
     private String userId;
+    private  String bookingId;
     private List<FlightTicketDto> tickets;
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
     }
 
     public void setUserId(String userId) {
