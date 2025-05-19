@@ -24,10 +24,10 @@ public class PriceController {
         return priceService.getAllPrices();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Price> getPriceById(@PathVariable Long id) {
+    @GetMapping("/{priceId}")
+    public ResponseEntity<Price> getPriceById(@PathVariable Long priceId) {
         try {
-            return ResponseEntity.ok(priceService.getPriceById(id));
+            return ResponseEntity.ok(priceService.getPriceById(priceId));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

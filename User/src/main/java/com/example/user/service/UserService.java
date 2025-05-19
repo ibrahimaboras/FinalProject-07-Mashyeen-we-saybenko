@@ -1,7 +1,9 @@
 package com.example.user.service;
 
+import com.example.user.client.BookingClient;
 import com.example.user.command.*;
 import com.example.user.config.SingletonSessionManager;
+import com.example.user.dto.BookingDTO;
 import com.example.user.dto.LoginDTO;
 import com.example.user.dto.PastFlightDTO;
 import com.example.user.model.User;
@@ -37,6 +39,8 @@ public class UserService {
     private UpdateProfileCommand updateProfileCommand;
     private RestTemplate restTemplate;
 
+    @Autowired
+    private BookingClient bookingClient;
 
     @Value("${booking.service.url}")
     private String bookingServiceUrl;
@@ -137,6 +141,20 @@ public class UserService {
         // 2. Process the notification (just print it in this simple version)
         System.out.println("Booking notification for user " + userId + ": " + bookingNotification);
     }
+
+    // View Bookings
+    public List<BookingDTO> viewBookings(Long userId) {
+        if (!SingletonSessionManager.getInstance().isLoggedIn(userId)) {
+            throw new RuntimeException("User is not logged in.");
+        }
+
+        List<BookingDTO> bookings = bookingClient.getBookingsByUserId(userId);
+        if (bookings == null || bookings.isEmpty()) {
+            throw new RuntimeException("No bookings found for user ID: " + userId);
+        }
+        return bookings;
+    }
+    
 
     // View Past Flights
 //    @Cacheable(value = "pastFlights", key = "#userId")

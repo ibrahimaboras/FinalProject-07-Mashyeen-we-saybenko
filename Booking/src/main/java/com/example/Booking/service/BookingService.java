@@ -1,14 +1,19 @@
 package com.example.Booking.service;
 
+import com.example.Booking.clients.FlightServiceClient;
 import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
+import com.example.Booking.dto.PriceDTO;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.repository.BookingRepository;
 import com.example.Booking.repository.PaymentRepository;
+import com.netflix.discovery.converters.Auto;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,9 @@ public class BookingService {
     private final PaymentRepository paymentRepo;
     private final CommandGateway commandGateway;
     private final UserServiceClient userServiceClient; // Added Feign client
+
+    @Autowired
+    private FlightServiceClient flightServiceClient;
 
     public BookingService(BookingRepository bookingRepo,
                           PaymentRepository paymentRepo,
@@ -103,5 +111,9 @@ public class BookingService {
             // Log error but don't interrupt main flow
             System.err.println("Failed to notify user service: " + e.getMessage());
         }
+    }
+
+    public PriceDTO getFlightInfoByPriceId(Long priceId) {
+        return flightServiceClient.getFlightInfo(priceId);
     }
 }

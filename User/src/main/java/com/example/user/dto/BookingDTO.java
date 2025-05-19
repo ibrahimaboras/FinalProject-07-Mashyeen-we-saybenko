@@ -7,6 +7,7 @@ import java.util.UUID;
 public class BookingDTO {
     private UUID bookingId;
     private Long userId;
+    private List<FlightTicketDTO> flightTickets;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -51,6 +52,14 @@ public class BookingDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<FlightTicketDTO> getFlightTickets() {
+        return flightTickets;
+    }
+
+    public void setFlightTickets(List<FlightTicketDTO> flightTickets) {
+        this.flightTickets = flightTickets;
     }
 }
 

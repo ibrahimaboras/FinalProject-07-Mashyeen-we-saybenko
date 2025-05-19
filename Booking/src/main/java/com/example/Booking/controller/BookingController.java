@@ -5,7 +5,7 @@ import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
-
+import com.example.Booking.dto.PriceDTO;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
 import com.example.Booking.service.BookingService;
@@ -69,5 +69,10 @@ public class BookingController {
     public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable Long userId) {
         List<Booking> bookings = service.getBookingsByUser(userId);
         return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/{priceID}/getFlightInfo")
+    public ResponseEntity<PriceDTO> getFlightInfo(@PathVariable Long priceID) {
+        return ResponseEntity.ok(service.getFlightInfoByPriceId(priceID));
     }
 }

@@ -51,8 +51,9 @@ public class CreateBookingCommand implements Command, Serializable {
         private String passportNumber;
         private String gender;
         private LocalDate dateOfBirth;
-        private UUID flightId;
-        private UUID seatId;
+        private Long flightId;
+        private Long seatId;
+        private Long priceId;
         private SeatClass seatClass;
     }
 }
