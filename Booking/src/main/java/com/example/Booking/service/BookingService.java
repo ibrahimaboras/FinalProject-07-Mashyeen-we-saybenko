@@ -48,7 +48,6 @@ public class BookingService {
         return bookingRepo.save(b);
 
 
-
     }
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
