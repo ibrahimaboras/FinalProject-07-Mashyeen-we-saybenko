@@ -22,6 +22,7 @@ public interface NotificationService {
 
     Optional<Notification> getNotificationById(String id);
     Notification createNotification(Notification notification);
+    void sendAndStoreNotification(Notification notification);
     Notification updateNotification(String id, Notification updatedNotification);
     void deleteNotification(String id);
 
