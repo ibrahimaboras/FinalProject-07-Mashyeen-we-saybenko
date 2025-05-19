@@ -44,9 +44,5 @@ spec:
                 secretKeyRef:
                   name: postgres-flight-secret
                   key: POSTGRES_PASSWORD
-<<<<<<< Updated upstream
-            - name: clients.booking.url
-=======
             - name: CLIENTS_BOOKING_URL
->>>>>>> Stashed changes
               value: http://booking-service:8082
