@@ -1,5 +1,7 @@
 package com.example.Booking.commads;
 
+import com.example.Booking.Events.BookingCreatedEvent;
+import com.example.Booking.Events.FlightTicketDto;
 import com.example.Booking.Events.RabbitConfig;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.SeatClass;
@@ -34,14 +36,38 @@ public class CreateBookingCommand implements Command, Serializable {
     @Override
     public void execute() {
 
-        Booking b = bookingService.createBooking(this);
+        // 1) persist
+        Booking saved = bookingService.createBooking(this);
 
+        // 2) map tickets → DTOs for JSON
+        List<FlightTicketDto> dtoTickets = tickets.stream()
+                .map(it -> new FlightTicketDto(
+                        it.getFullName(),
+                        it.getNationality(),
+                        it.getPassportNumber(),
+                        it.getGender(),
+                        it.getDateOfBirth().toString(),
+                        it.getFlightId().toString(),
+                        it.getSeatId().toString(),
+                        it.getSeatClass().name()
+                ))
+                .toList();
+
+        // 3) build your event payload
+        BookingCreatedEvent event =
+                new BookingCreatedEvent(
+                        userId.toString(),
+                        dtoTickets
+                );
+
+        // 4) publish
         rabbit.convertAndSend(
                 RabbitConfig.EXCHANGE,
                 RabbitConfig.ROUTING_CREATED,
-                b.getBookingId()
+                event
         );
-        System.out.println("→ Event: " + RabbitConfig.ROUTING_CREATED + " → " + b.getBookingId());
+
+        System.out.println("→ Sent booking.created → " + event);
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor
