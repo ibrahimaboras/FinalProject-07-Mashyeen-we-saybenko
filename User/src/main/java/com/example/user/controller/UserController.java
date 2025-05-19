@@ -85,4 +85,14 @@ public class UserController {
     public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
+
+    @PostMapping("/{userId}/booking-notifications")
+    public ResponseEntity<?> handleBookingNotification(
+            @PathVariable Long userId,
+            @RequestBody String bookingNotification) {
+
+        // Delegate processing to service layer
+        userService.processBookingNotification(userId, bookingNotification);
+        return ResponseEntity.ok().build();
+    }
 }

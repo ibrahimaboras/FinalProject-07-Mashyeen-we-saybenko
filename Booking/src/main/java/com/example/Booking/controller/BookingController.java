@@ -1,6 +1,7 @@
 package com.example.Booking.controller;
 
 import com.example.Booking.Events.RabbitConfig;
+import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
@@ -19,11 +20,13 @@ import java.util.UUID;
 public class BookingController {
     private final CommandGateway gateway;
     private final BookingService service;
+    private final UserServiceClient userServiceClient;
 
     public BookingController(CommandGateway gateway,
-                             BookingService service) {
+                             BookingService service, UserServiceClient userServiceClient) {
         this.gateway = gateway;
         this.service = service;
+        this.userServiceClient = userServiceClient;
     }
 
     @PostMapping
@@ -43,7 +46,7 @@ public class BookingController {
 
     @GetMapping
     public List<Booking> list(
-            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) Long userId,
             @RequestParam(required = false) BookingStatus status
     ) {
         if (userId != null)   return service.getBookingsByUser(userId);

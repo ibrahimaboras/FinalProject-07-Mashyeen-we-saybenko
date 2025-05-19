@@ -128,6 +128,15 @@ public class UserService {
         }
     }
 
+    public void processBookingNotification(Long userId, String bookingNotification) {
+        // 1. Verify user exists (optional check)
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // 2. Process the notification (just print it in this simple version)
+        System.out.println("Booking notification for user " + userId + ": " + bookingNotification);
+    }
 
     // View Past Flights
 //    @Cacheable(value = "pastFlights", key = "#userId")

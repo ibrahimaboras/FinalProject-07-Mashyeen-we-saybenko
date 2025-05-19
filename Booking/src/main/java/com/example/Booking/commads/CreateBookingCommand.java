@@ -20,7 +20,7 @@ import java.util.UUID;
 public class CreateBookingCommand implements Command, Serializable {
     @Serial private static final long serialVersionUID = 1L;
 
-    private UUID userId;
+    private Long userId;
     private List<InitialTicket> tickets;
 
     // these won’t be serialized into JSON

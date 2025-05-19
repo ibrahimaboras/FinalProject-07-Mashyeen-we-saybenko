@@ -1,20 +1,17 @@
 package com.example.Booking.service;
 
+import com.example.Booking.clients.UserServiceClient;
 import com.example.Booking.commads.CancelBookingCommand;
 import com.example.Booking.commads.CommandGateway;
 import com.example.Booking.commads.CreateBookingCommand;
 import com.example.Booking.factory.BookingFactory;
 import com.example.Booking.model.Booking;
 import com.example.Booking.model.BookingStatus;
-import com.example.Booking.model.Payment;
-import com.example.Booking.model.PaymentStatus;
 import com.example.Booking.repository.BookingRepository;
 import com.example.Booking.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,17 +20,20 @@ public class BookingService {
     private final BookingRepository bookingRepo;
     private final PaymentRepository paymentRepo;
     private final CommandGateway commandGateway;
+    private final UserServiceClient userServiceClient; // Added Feign client
 
     public BookingService(BookingRepository bookingRepo,
-                          PaymentRepository paymentRepo, CommandGateway commandGateway) {
+                          PaymentRepository paymentRepo,
+                          CommandGateway commandGateway,
+                          UserServiceClient userServiceClient) { // Added parameter
         this.bookingRepo = bookingRepo;
         this.paymentRepo = paymentRepo;
-        this.commandGateway  = commandGateway;
+        this.commandGateway = commandGateway;
+        this.userServiceClient = userServiceClient;
     }
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-
         // 1) create & save
         Booking b = BookingFactory.createBooking(cmd);
         b.setStatus(BookingStatus.PENDING);
@@ -44,8 +44,12 @@ public class BookingService {
                 "booking.created",
                 cmd);
 
+        // 3) Notify user service (added)
+        notifyUserService(saved.getBookingId(), saved.getUserId(), "created");
+
         return saved;
     }
+
     public Booking getBooking(UUID id) {
         return bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
@@ -55,7 +59,7 @@ public class BookingService {
         return bookingRepo.findAll();
     }
 
-    public List<Booking> getBookingsByUser(UUID userId) {
+    public List<Booking> getBookingsByUser(Long userId) {
         return bookingRepo.findByUserId(userId);
     }
 
@@ -79,7 +83,25 @@ public class BookingService {
                 "booking.cancelled",
                 cancelCmd);
 
+        // Notify user service (added)
+        notifyUserService(updated.getBookingId(), updated.getUserId(), "cancelled");
+
         return updated;
     }
 
+    // New private helper method to handle user notifications
+    private void notifyUserService(UUID bookingId, Long userId, String action) {
+        try {
+            String notification = String.format(
+                    "Booking %s - ID: %s, User: %s",
+                    action,
+                    bookingId,
+                    userId
+            );
+            userServiceClient.sendBookingNotification(userId, notification);
+        } catch (Exception e) {
+            // Log error but don't interrupt main flow
+            System.err.println("Failed to notify user service: " + e.getMessage());
+        }
+    }
 }

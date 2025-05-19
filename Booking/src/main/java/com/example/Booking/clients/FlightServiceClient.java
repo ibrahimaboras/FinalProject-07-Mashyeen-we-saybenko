@@ -7,11 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-@FeignClient(name = "flight-service")
+@FeignClient(name = "flight-service", url = "http://localhost:8080/api/flights")
 public interface FlightServiceClient {
-    @GetMapping("/flights/{flightId}/availability")
-    boolean isSeatAvailable(
-            @PathVariable UUID flightId,
-            @RequestParam int seatsRequired
-    );
+    @GetMapping("/flights/{flightId}")
+    Object getFlight(@PathVariable String flightId);
 }
