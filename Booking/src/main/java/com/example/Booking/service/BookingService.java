@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +49,19 @@ public class BookingService {
 
     @Transactional
     public Booking createBooking(CreateBookingCommand cmd) {
-        // 1) create & save
-        Booking b = BookingFactory.createBooking(cmd);
-        b.setStatus(BookingStatus.PENDING);
-        return bookingRepo.save(b);
+        try {
+//            Booking b = BookingFactory.createBooking(cmd);
+//            b.setStatus(BookingStatus.PENDING);
+//            return bookingRepo.save(b);
 
+            Class<?> factoryClass = Class.forName("com.example.Booking.factory.BookingFactory");
+            Method createMethod = factoryClass.getMethod("createBooking", CreateBookingCommand.class);
+            Booking b = (Booking) createMethod.invoke(null, cmd);
+            b.setStatus(BookingStatus.PENDING);
+            return bookingRepo.save(b);
+        } catch (Exception e) {
+            throw new RuntimeException("Reflection error", e);
+        }
     }
 
     public Booking getBooking(UUID id) {
