@@ -20,15 +20,13 @@ spec:
             - containerPort: 8083
           env:
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: "http://eureka-server:8761/eureka/"
+              value: "http://eureka-service:8761/eureka/"
             - name: EUREKA_CLIENT_REGISTER_WITH_EUREKA
               value: "true"
             - name: EUREKA_CLIENT_FETCH_REGISTRY
               value: "true"
             - name: SPRING_PROFILES_ACTIVE
               value: k8s
-            - name: SERVER_PORT
-              value: "8083"
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
                 secretKeyRef:
