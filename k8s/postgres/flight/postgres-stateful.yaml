@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-flight
+  namespace: acl-app
 spec:
   serviceName: "postgres-flight"
   replicas: 1

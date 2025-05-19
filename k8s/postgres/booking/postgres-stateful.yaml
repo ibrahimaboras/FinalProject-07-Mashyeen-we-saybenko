@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-booking
+  namespace: acl-app
 spec:
   serviceName: "postgres-booking"
   replicas: 1

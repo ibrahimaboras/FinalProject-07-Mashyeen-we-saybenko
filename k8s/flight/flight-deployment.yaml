@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flight-service
+  namespace: acl-app
 spec:
   replicas: 2
   selector:
@@ -14,7 +15,7 @@ spec:
     spec:
       containers:
         - name: flight-service
-          image: mohamedelassyouty/microserviceswithk8s-flight #pull your own pushed image
+          image: mohamedmohey/acl-flight
           ports:
             - containerPort: 8081
           env:

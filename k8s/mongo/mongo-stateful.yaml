@@ -2,9 +2,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo
+  namespace: acl-app
 spec:
-  serviceName: "mongo"  # Must match headless service
-  replicas: 1  # Can scale to more for replica set
+  serviceName: "mongo" # Must match headless service
+  replicas: 1 # Can scale to more for replica set
   selector:
     matchLabels:
       app: mongo
@@ -40,3 +41,4 @@ spec:
         resources:
           requests:
             storage: 1Gi
+

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notification-service
+  namespace: acl-app
 spec:
   replicas: 2
   selector:
@@ -14,7 +15,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: mohamedelassyouty/microserviceswithk8s-notification
+          image: mohamedmohey/acl-notification
           ports:
             - containerPort: 8083
           env:
