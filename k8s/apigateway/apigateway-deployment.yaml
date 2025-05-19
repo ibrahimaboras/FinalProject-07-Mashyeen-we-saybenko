@@ -31,6 +31,7 @@ spec:
               value: "80"
             - name: SPRING_MAIN_WEB_APPLICATION_TYPE
               value: reactive
+
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
               value: user-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
@@ -46,50 +47,15 @@ spec:
               value: Path=/api/flights/**
 
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
-              value: aircrafts-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
-              value: http://flight-service:8081
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
-              value: Path=/api/aircrafts/**
-
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
-              value: prices-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
-              value: http://flight-service:8081
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
-              value: Path=/api/prices/**
-
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_ID
-              value: seats-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
-              value: http://flight-service:8081
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0
-              value: Path=/api/seats/**
-
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_ID
               value: bookings-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_URI
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
               value: http://booking-service:8082
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_PREDICATES_0
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
               value: Path=/api/bookings/**
 
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_ID
-              value: tickets-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_URI
-              value: http://booking-service:8082
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_PREDICATES_0
-              value: Path=/api/tickets/**
-
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_7_ID
-              value: payments-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_7_URI
-              value: http://booking-service:8082
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_7_PREDICATES_0
-              value: Path=/api/payments/**
-
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_8_ID
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
               value: notifications-route
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_8_URI
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
               value: http://notification-service:8083
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_8_PREDICATES_0
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
               value: Path=/api/notifications/**
