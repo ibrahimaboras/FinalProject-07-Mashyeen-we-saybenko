@@ -39,10 +39,10 @@ public class BookingController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/{id}")
-    public Booking get(@PathVariable UUID id) {
-        return service.getBooking(id);
-    }
+    // @GetMapping("/{id}")
+    // public Booking get(@PathVariable UUID id) {
+    //     return service.getBooking(id);
+    // }
 
     @GetMapping
     public List<Booking> list(
@@ -63,5 +63,11 @@ public class BookingController {
                 cancelCmd
         );
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable Long userId) {
+        List<Booking> bookings = service.getBookingsByUser(userId);
+        return ResponseEntity.ok(bookings);
     }
 }
