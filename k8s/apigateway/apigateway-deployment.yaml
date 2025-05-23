@@ -4,7 +4,7 @@ metadata:
   name: apigateway-service
   namespace: acl-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: apigateway-service
@@ -31,13 +31,14 @@ spec:
               value: "80"
             - name: SPRING_MAIN_WEB_APPLICATION_TYPE
               value: reactive
-
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
               value: user-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
               value: http://user-service:8080
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
               value: Path=/api/users/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0
+              value: StripPrefix=2
 
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
               value: flights-route
@@ -45,6 +46,8 @@ spec:
               value: http://flight-service:8081
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
               value: Path=/api/flights/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0
+              value: StripPrefix=2
 
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
               value: bookings-route
@@ -52,6 +55,8 @@ spec:
               value: http://booking-service:8082
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
               value: Path=/api/bookings/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_0
+              value: StripPrefix=2
 
             - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
               value: notifications-route
@@ -59,3 +64,5 @@ spec:
               value: http://notification-service:8083
             - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
               value: Path=/api/notifications/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_FILTERS_0
+              value: StripPrefix=2
